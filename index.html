@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wanderlust Adventures | Discover Your Next Journey</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container">
+            <div>
+                <span>📞 +254 700 123 456</span>
+                <span>✉️ hello@wanderlust.com</span>
+            </div>
+            <div>
+                <a href="#">Become a Tour Guide</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="navbar">
+            <a href="#" class="logo">Wander<span>Lust</span></a>
+            <nav>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#destinations">Destinations</a></li>
+                    <li><a href="#tours">Tours</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <div>
+                <h1>Adventure Awaits You</h1>
+                <p>Where Will Your Journey Take You?</p>
+                <div class="search-box">
+                    <input type="text" id="destination" placeholder="Where to?">
+                    <input type="date" id="travel-date" placeholder="When?">
+                    <select id="tour-type">
+                        <option>Tour Type</option>
+                        <option>Beach & Island</option>
+                        <option>Mountain Trek</option>
+                        <option>City Discovery</option>
+                        <option>Wildlife Safari</option>
+                    </select>
+                    <button class="btn-primary" onclick="searchTours()">Search Tours</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Destinations Section -->
+    <section class="section" id="destinations">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-tag">Top Destinations</p>
+                <h2 class="section-title">Discover Amazing Places</h2>
+            </div>
+            <div class="destinations-grid" id="destinations-container">
+                <!-- Destinations will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section about-section" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image">
+                    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%231a5f7a;stop-opacity:1'/><stop offset='100%25' style='stop-color:%23159895;stop-opacity:1'/></linearGradient></defs><rect fill='url(%23grad)' width='600' height='400'/><circle fill='%23e67e22' cx='300' cy='200' r='80' opacity='0.3'/><path fill='white' d='M100 300 Q200 250 300 300 T500 300' stroke='white' stroke-width='2' fill='none'/><text x='150' y='150' font-size='32' fill='white' font-family='Arial' font-weight='bold'>Explore</text><text x='150' y='190' font-size='32' fill='white' font-family='Arial' font-weight='bold'>Dream</text><text x='150' y='230' font-size='32' fill='white' font-family='Arial' font-weight='bold'>Discover</text></svg>"
+                        alt="About">
+                    <div class="discount-badge">
+                        <span class="percent">25%</span>
+                        <span>Off</span>
+                    </div>
+                </div>
+                <div class="about-text">
+                    <h3>Get to know us</h3>
+                    <h2>Plan Your Perfect Adventure with WanderLust</h2>
+                    <p>We are passionate about creating unforgettable travel experiences. With years of expertise in the
+                        industry, we craft personalized journeys that go beyond typical tourism, offering authentic
+                        connections with diverse cultures and breathtaking landscapes.</p>
+                    <ul class="features-list">
+                        <li>Expert local guides in every destination</li>
+                        <li>Customizable itineraries for all travelers</li>
+                        <li>24/7 customer support worldwide</li>
+                        <li>Best price guarantee on all tours</li>
+                    </ul>
+                    <button class="btn-primary">Explore Our Tours</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Tours Section -->
+    <section class="section" id="tours">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-tag">Featured Adventures</p>
+                <h2 class="section-title">Most Popular Tours</h2>
+            </div>
+            <div class="tours-grid" id="tours-container">
+                <!-- Tours will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <p class="section-tag" style="color: rgba(255,255,255,0.8)">Customer Stories</p>
+                <h2 class="section-title" style="color: white">What Travelers Say</h2>
+            </div>
+            <div class="testimonials-grid" id="testimonials-container">
+                <!-- Testimonials will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>WanderLust Adventures</h3>
+                <p>Creating unforgettable travel experiences around the world.</p>
+                <p>📞 +254 700 123 456</p>
+                <p>✉️ hello@wanderlust.com</p>
+                <p>📍 Nairobi, Kenya</p>
+            </div>
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Travel Insurance</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to get special offers and travel tips</p>
+                <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                    <input type="email" id="newsletter-email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WanderLust Adventures. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
