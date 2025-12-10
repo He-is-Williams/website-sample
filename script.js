@@ -1,34 +1,79 @@
 // Destinations Data
 const destinations = [
     {
-        name: "Bali",
+        name: "Mombasa",
         tours: 12,
         badge: "Beach Paradise",
-        image: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 350'><rect fill='%23c0e8f9' width='400' height='350'/><path fill='%2386d3f4' d='M0 250 Q100 200 200 250 T400 250 V350 H0 Z'/><circle fill='%23ffd93d' cx='320' cy='60' r='40'/><text x='50' y='180' font-size='24' fill='%23333' font-family='Arial'>Bali</text></svg>"
+        image: "images/destination_mombasa.jpg",
+        tile: "tile-tall",
+        featured: true
     },
     {
-        name: "Iceland",
+        name: "Nakuru",
         tours: 8,
         badge: "Adventure",
-        image: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 350'><rect fill='%23d4e9d7' width='400' height='350'/><path fill='%2387b38d' d='M0 280 L100 250 L200 270 L300 240 L400 260 V350 H0 Z'/><text x='50' y='180' font-size='24' fill='%23333' font-family='Arial'>Iceland</text></svg>"
+        image: "images/destination_nakuru.jpg",
+        tile: "",
+        featured: true
     },
     {
-        name: "Morocco",
-        tours: 10,
-        badge: "Cultural",
-        image: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 350'><rect fill='%23f4e4c1' width='400' height='350'/><path fill='%23d4a574' d='M0 200 Q100 180 200 200 T400 200 V350 H0 Z'/><circle fill='%23e8b86d' cx='100' cy='100' r='50'/><circle fill='%23d4a574' cx='320' cy='120' r='40'/><text x='50' y='180' font-size='24' fill='%23333' font-family='Arial'>Morocco</text></svg>"
+        name: "Dubai",
+        tours: 7,
+        badge: "City Break",
+        image: "images/destination_dubai.jpg",
+        tile: "tile-tall",
+        featured: true   
     },
     {
         name: "Japan",
         tours: 15,
         badge: "Heritage",
-        image: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 350'><rect fill='%23ffd6d6' width='400' height='350'/><path fill='%23ff9a9a' d='M0 240 L400 260 V350 H0 Z'/><circle fill='%23ff6b9d' cx='200' cy='100' r='30'/><text x='50' y='180' font-size='24' fill='%23333' font-family='Arial'>Japan</text></svg>"
+        image: "images/destination_japan.jpg",
+        tile: "tile-small",
+        featured: true
     },
     {
         name: "New Zealand",
         tours: 9,
         badge: "Nature",
-        image: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 350'><rect fill='%23c8e6c9' width='400' height='350'/><path fill='%2381c784' d='M0 220 Q100 200 200 220 T400 220 V350 H0 Z'/><text x='50' y='180' font-size='24' fill='%23333' font-family='Arial'>New Zealand</text></svg>"
+        image: "images/destination_newzealand.jpg",
+        tile: "",
+        featured: true
+    },
+    {
+        name: "Bali",
+        tours: 11,
+        badge: "Beach Paradise",
+        image: "images/destination_3.png",
+        tile: "tile-wide"
+    },
+    {
+        name: "Naivasha",
+        tours: 10,
+        badge: "Cultural",
+        image: "images/destination_2.jpg",
+        tile: "tile-small"
+    },
+    {
+        name: "Switzerland",
+        tours: 13,
+        badge: "Adventure",
+        image: "images/destination_3.png",
+        tile: ""
+    },
+    {
+        name: "China",
+        tours: 9,
+        badge: "Cultural",
+        image: "images/destination_2.jpg",
+        tile: ""
+    },
+    {
+        name: "Germany",
+        tours: 6,
+        badge: "City Break",
+        image: "images/destination_1.png",
+        tile: ""
     }
 ];
 
@@ -92,9 +137,34 @@ const testimonials = [
 
 // Load Destinations
 function loadDestinations() {
-    const container = document.getElementById('destinations-container');
-    container.innerHTML = destinations.map(dest => `
-        <div class="destination-card">
+    // prefer the new destinations list container if present (destinations.html)
+    let container = document.getElementById('destinations-list');
+    if (!container) container = document.getElementById('destinations-container');
+    if (!container) return; // nothing to render into
+
+    // ensure the grid class is present so CSS rules apply
+    if (!container.classList.contains('destinations-grid')) {
+        container.classList.add('destinations-grid');
+    }
+
+    // pattern used when a destination doesn't declare its own tile size
+    const tilePattern = ["", "tile-large", "", "tile-wide", "", "tile-tall", "tile-wide", "", ""]; 
+
+    // On the home page (destinations-container) show up to 5 featured cards; if none, fall back to first 5
+    const isHomeList = container.id === 'destinations-container';
+    let itemsToRender = destinations;
+    if (isHomeList) {
+        const featured = destinations.filter(d => d.featured);
+        itemsToRender = featured.length ? featured.slice(0, 5) : destinations.slice(0, 5);
+    }
+
+    container.innerHTML = itemsToRender.map((dest, idx) => {
+        // use tile from data or fall back to a repeatable pattern (use overall index when not on home)
+        const globalIndex = destinations.indexOf(dest);
+        const tileClass = dest.tile ? dest.tile : tilePattern[globalIndex % tilePattern.length] || '';
+        const classes = `destination-card ${tileClass}`.trim();
+        return `
+        <div class="${classes}">
             <img src="${dest.image}" alt="${dest.name}" class="destination-img">
             <div class="destination-info">
                 <span class="destination-badge">${dest.badge}</span>
@@ -102,7 +172,8 @@ function loadDestinations() {
                 <p class="destination-tours">${dest.tours} Amazing Tours</p>
             </div>
         </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 // Load Tours
@@ -229,4 +300,201 @@ document.addEventListener('DOMContentLoaded', function () {
         section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         observer.observe(section);
     });
+
+    // Initialize hero slideshow (auto-fade)
+    function initHeroSlideshow(interval = 4000) {
+        const slides = document.querySelectorAll('.hero-slides .slide');
+        if (!slides || slides.length < 2) return; // nothing to rotate
+
+        let current = Array.from(slides).findIndex(s => s.classList.contains('active'));
+        if (current === -1) current = 0;
+
+        let timer = null;
+
+        function show(index) {
+            slides.forEach((s, i) => {
+                s.classList.toggle('active', i === index);
+            });
+        }
+
+        function next() {
+            current = (current + 1) % slides.length;
+            show(current);
+        }
+
+        // start automatic cycling
+        timer = setInterval(next, interval);
+
+        // pause on hover/focus for accessibility
+        const hero = document.querySelector('.hero');
+        if (hero) {
+            hero.addEventListener('mouseenter', () => {
+                if (timer) { clearInterval(timer); timer = null; }
+            });
+            hero.addEventListener('mouseleave', () => {
+                if (!timer) timer = setInterval(next, interval);
+            });
+        }
+
+        // pause/resume when slides receive focus (keyboard users)
+        slides.forEach(slide => {
+            slide.setAttribute('tabindex', '-1');
+            slide.addEventListener('focusin', () => {
+                if (timer) { clearInterval(timer); timer = null; }
+            });
+            slide.addEventListener('focusout', () => {
+                if (!timer) timer = setInterval(next, interval);
+            });
+        });
+    }
+
+    // start slideshow
+    initHeroSlideshow(4000);
+
+    // Destinations mega-menu toggle
+    const dropdownToggle = document.querySelector('.dropdown-toggle');
+    const megaMenu = document.getElementById('destinations-menu');
+    if (dropdownToggle && megaMenu) {
+        dropdownToggle.addEventListener('click', (e) => {
+            const expanded = dropdownToggle.getAttribute('aria-expanded') === 'true';
+            dropdownToggle.setAttribute('aria-expanded', String(!expanded));
+            const hidden = megaMenu.getAttribute('aria-hidden') === 'true';
+            megaMenu.setAttribute('aria-hidden', String(!hidden));
+        });
+
+        // close on outside click
+        document.addEventListener('click', (e) => {
+            if (!megaMenu.contains(e.target) && !dropdownToggle.contains(e.target)) {
+                dropdownToggle.setAttribute('aria-expanded', 'false');
+                megaMenu.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        // close on escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                dropdownToggle.setAttribute('aria-expanded', 'false');
+                megaMenu.setAttribute('aria-hidden', 'true');
+            }
+        });
+    }
+
+    // Enhanced mega-menu behavior: keep menu visible while scrolling on desktop
+    (function enhanceMegaMenu() {
+        const dropdownToggle = document.querySelector('.dropdown-toggle');
+        const megaMenu = document.getElementById('destinations-menu');
+        const dropdownItem = document.querySelector('.has-dropdown');
+        if (!dropdownToggle || !megaMenu || !dropdownItem) return;
+
+        let isOpen = false;
+        let isFixed = false;
+
+        function updatePosition() {
+            if (!isOpen || !isFixed) return;
+            const rect = dropdownToggle.getBoundingClientRect();
+            const menuWidth = Math.min(320, window.innerWidth - 16); // clamp width
+            let left = rect.left;
+            // ensure menu doesn't overflow right edge
+            if (left + menuWidth > window.innerWidth - 8) {
+                left = window.innerWidth - menuWidth - 8;
+            }
+            const top = rect.bottom + 6; // position below the toggle
+            megaMenu.style.position = 'fixed';
+            megaMenu.style.left = `${left}px`;
+            megaMenu.style.top = `${top}px`;
+            megaMenu.style.width = `${menuWidth}px`;
+            // limit height and allow scrolling inside the menu
+            const maxH = Math.max(120, window.innerHeight - top - 24);
+            megaMenu.style.maxHeight = `${maxH}px`;
+            megaMenu.style.overflowY = 'auto';
+        }
+
+        function openMegaMenu(focus = false) {
+            isOpen = true;
+            // on desktop, pin the menu as fixed so it stays visible while scrolling
+            if (window.innerWidth >= 769) {
+                isFixed = true;
+            } else {
+                isFixed = false;
+                // ensure menu uses normal static positioning on mobile
+                megaMenu.style.position = '';
+                megaMenu.style.left = '';
+                megaMenu.style.top = '';
+                megaMenu.style.width = '';
+                megaMenu.style.maxHeight = '';
+                megaMenu.style.overflowY = '';
+            }
+            dropdownToggle.setAttribute('aria-expanded', 'true');
+            megaMenu.setAttribute('aria-hidden', 'false');
+            updatePosition();
+            // attach listeners to update while scrolling/resizing
+            window.addEventListener('scroll', updatePosition, { passive: true });
+            window.addEventListener('resize', updatePosition);
+            if (focus) megaMenu.focus();
+        }
+
+        function closeMegaMenu() {
+            isOpen = false;
+            isFixed = false;
+            dropdownToggle.setAttribute('aria-expanded', 'false');
+            megaMenu.setAttribute('aria-hidden', 'true');
+            // reset any inline styles we applied
+            megaMenu.style.position = '';
+            megaMenu.style.left = '';
+            megaMenu.style.top = '';
+            megaMenu.style.width = '';
+            megaMenu.style.maxHeight = '';
+            megaMenu.style.overflowY = '';
+            window.removeEventListener('scroll', updatePosition);
+            window.removeEventListener('resize', updatePosition);
+        }
+
+        // Desktop: open on mouseenter, close on mouseleave
+        dropdownItem.addEventListener('mouseenter', () => {
+            if (window.innerWidth >= 769) openMegaMenu();
+        });
+        dropdownItem.addEventListener('mouseleave', () => {
+            if (window.innerWidth >= 769) closeMegaMenu();
+        });
+
+        // Keyboard accessibility: open on focus within, close on focusout if leaving
+        dropdownItem.addEventListener('focusin', () => openMegaMenu(true));
+        dropdownItem.addEventListener('focusout', (e) => {
+            // close only if focus moved outside the dropdownItem
+            if (!dropdownItem.contains(e.relatedTarget)) closeMegaMenu();
+        });
+
+        // Mobile / caret button: toggle menu using open/close functions
+        const caretButton = document.querySelector('.dropdown-toggle');
+        const mainDestLink = document.querySelector('.dropdown-link');
+        if (caretButton) {
+            caretButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (megaMenu.getAttribute('aria-hidden') === 'true') {
+                    openMegaMenu(true);
+                } else {
+                    closeMegaMenu();
+                }
+            });
+        }
+
+        // Make sure clicking the main Destinations link navigates away (no preventDefault)
+        if (mainDestLink) {
+            mainDestLink.addEventListener('click', (e) => {
+                // allow navigation; close menu to be safe
+                closeMegaMenu();
+            });
+        }
+
+        // Close on Escape or outside click (preserve earlier behavior)
+        document.addEventListener('click', (e) => {
+            if (!megaMenu.contains(e.target) && !dropdownToggle.contains(e.target)) {
+                closeMegaMenu();
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeMegaMenu();
+        });
+    })();
+
 });

@@ -29,7 +29,32 @@
             <nav>
                 <ul>
                     <li><a href="#home">Home</a></li>
-                    <li><a href="#destinations">Destinations</a></li>
+                    <li class="has-dropdown">
+                        <a href="destinations.html" class="dropdown-link">Destinations</a>
+                        <button class="dropdown-toggle" aria-expanded="false" aria-controls="destinations-menu" aria-label="Open destinations menu">▾</button>
+                        <div class="mega-menu" id="destinations-menu" role="menu" aria-hidden="true">
+                            <div class="mega-menu-inner">
+                                <div class="mega-column">
+                                    <h4>Africa</h4>
+                                    <ul>
+                                        <li><a href="#kenya">Kenya</a></li>
+                                        <li><a href="#mauritius">Mauritius</a></li>
+                                        <li><a href="#south-africa">South Africa</a></li>
+                                        <li><a href="#tanzania">Tanzania</a></li>
+                                    </ul>
+                                </div>
+                                <div class="mega-column">
+                                    <h4>Middle East</h4>
+                                    <ul>
+                                        <li><a href="#china">China</a></li>
+                                        <li><a href="#pakistan">Pakistan</a></li>
+                                        <li><a href="#singapore">Singapore</a></li>
+                                        <li><a href="#uae">UAE (Dubai)</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
                     <li><a href="#tours">Tours</a></li>
                     <li><a href="#about">About</a></li>
                     <li><a href="#contact">Contact</a></li>
@@ -41,6 +66,12 @@
 
     <!-- Hero Section -->
     <section class="hero" id="home">
+        <!-- hero slides (behind content) -->
+        <div class="hero-slides" aria-hidden="true">
+            <img src="images/hero_1.jpg" alt="Slide 1" class="slide active">
+            <img src="images/hero_2.jpg" alt="Slide 2" class="slide">
+            <img src="images/hero_3.jpg" alt="Slide 3" class="slide">
+        </div>
         <div class="hero-content">
             <div>
                 <h1>Adventure Awaits You</h1>
@@ -79,7 +110,7 @@
         <div class="container">
             <div class="about-content">
                 <div class="about-image">
-                    <img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 400'><defs><linearGradient id='grad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' style='stop-color:%231a5f7a;stop-opacity:1'/><stop offset='100%25' style='stop-color:%23159895;stop-opacity:1'/></linearGradient></defs><rect fill='url(%23grad)' width='600' height='400'/><circle fill='%23e67e22' cx='300' cy='200' r='80' opacity='0.3'/><path fill='white' d='M100 300 Q200 250 300 300 T500 300' stroke='white' stroke-width='2' fill='none'/><text x='150' y='150' font-size='32' fill='white' font-family='Arial' font-weight='bold'>Explore</text><text x='150' y='190' font-size='32' fill='white' font-family='Arial' font-weight='bold'>Dream</text><text x='150' y='230' font-size='32' fill='white' font-family='Arial' font-weight='bold'>Discover</text></svg>"
+                    <img src="images/hero_1.jpg"
                         alt="About">
                     <div class="discount-badge">
                         <span class="percent">25%</span>

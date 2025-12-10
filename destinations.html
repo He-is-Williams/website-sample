@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Destinations — WanderLust Adventures</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="destinations.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <a href="index.html" class="logo">Wander<span>Lust</span></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#destinations">Destinations</a></li>
+                    <li><a href="index.html#tours">Tours</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Page Hero -->
+    <section class="section hero small-hero">
+        <div class="container">
+            <h1>Explore Destinations</h1>
+            <p>Browse our most popular travel destinations and discover curated tours, local tips and featured experiences.</p>
+        </div>
+    </section>
+
+    <!-- Page Content -->
+    <main class="section" id="destinations">
+        <div class="container destinations-layout">
+            <!-- Sidebar / Filters -->
+            <aside>
+                <div class="panel">
+                    <h3>Filter</h3>
+                    <label for="filter-region">Region</label>
+                    <select id="filter-region">
+                        <option value="all">All Regions</option>
+                        <option value="africa">Africa</option>
+                        <option value="asia">Asia</option>
+                        <option value="europe">Europe</option>
+                        <option value="oceania">Oceania</option>
+                    </select>
+
+                    <div class="spacer"></div>
+                    <label for="filter-type">Type</label>
+                    <select id="filter-type">
+                        <option value="all">All Types</option>
+                        <option>Beach & Island</option>
+                        <option>Mountain Trek</option>
+                        <option>City Discovery</option>
+                        <option>Wildlife Safari</option>
+                    </select>
+
+                    <div class="spacer-lg"></div>
+                    <button id="apply-filters" class="btn-primary btn-full">Apply Filters</button>
+                </div>
+
+                <div class="spacer-lg"></div>
+
+                <div class="panel">
+                    <h4>Popular Regions</h4>
+                    <ul>
+                        <li><a href="#">Kenya</a></li>
+                        <li><a href="#">Tanzania</a></li>
+                        <li><a href="#">Japan</a></li>
+                        <li><a href="#">New Zealand</a></li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Destinations grid -->
+            <section>
+                <div class="page-header-row">
+                    <h2>Top Destinations</h2>
+                    <div class="result-count">Showing <span id="result-count">8</span> results</div>
+                </div>
+
+                <div class="destinations-grid" id="destinations-list">
+                    <!-- cards inserted by JS -->
+                </div>
+
+                <div class="pagination">
+                    <button class="btn-primary alt">‹ Prev</button>
+                    <button class="btn-primary">Next ›</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="destinations-footer">
+        <div class="container">
+            <div class="footer-row">
+                <div>© 2024 WanderLust Adventures</div>
+                <div>Contact: hello@wanderlust.com</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Sample data for the destinations page (keeps content dynamic and consistent)
+        const sampleDestinations = [
+            { name: 'Mombasa', badge: 'Beach Paradise', tours: 12, image: 'images/destination_1.png' },
+            { name: 'Nakuru', badge: 'Adventure', tours: 8, image: 'images/destination_2.jpg' },
+            { name: 'Naivasha', badge: 'Cultural', tours: 10, image: 'images/destination_3.png' },
+            { name: 'Japan', badge: 'Heritage', tours: 15, image: 'images/destination_2.jpg' },
+            { name: 'New Zealand', badge: 'Nature', tours: 9, image: 'images/destination_2.jpg' },
+            { name: 'Zanzibar', badge: 'Island Escape', tours: 7, image: 'images/destination_3.png' },
+            { name: 'Iceland', badge: 'Adventure', tours: 6, image: 'images/destination_2.jpg' },
+            { name: 'Bali', badge: 'Beach Paradise', tours: 11, image: 'images/destination_1.png' }
+        ];
+
+        const list = document.getElementById('destinations-list');
+        const count = document.getElementById('result-count');
+
+        function renderDestinations(items) {
+            list.innerHTML = items.map(d => `
+                <div class="destination-card">
+                    <img class="destination-img" src="${d.image}" alt="${d.name}">
+                    <div class="destination-info">
+                        <span class="destination-badge">${d.badge}</span>
+                        <h3 class="destination-title">${d.name}</h3>
+                        <p class="destination-tours">${d.tours} Amazing Tours</p>
+                    </div>
+                </div>
+            `).join('');
+            count.textContent = items.length;
+        }
+
+        renderDestinations(sampleDestinations);
+
+        // Filter behavior (basic)
+        document.getElementById('apply-filters').addEventListener('click', () => {
+            const region = document.getElementById('filter-region').value;
+            const type = document.getElementById('filter-type').value;
+            // this is a demo: just filter by name for the region value
+            let filtered = sampleDestinations.slice();
+            if (region !== 'all') filtered = filtered.filter(d => d.name.toLowerCase().includes(region));
+            renderDestinations(filtered);
+        });
+    </script>
+</body>
+</html>
