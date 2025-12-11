@@ -85,7 +85,7 @@ const tours = [
         rating: 9.2,
         days: 5,
         location: "Maldives",
-        image: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 250'><rect fill='%2387ceeb' width='400' height='250'/><circle fill='%23ffd700' cx='350' cy='40' r='30'/><path fill='%23f4a460' d='M0 180 Q100 160 200 180 T400 180 V250 H0 Z'/><path fill='%2332cd32' d='M50 200 L70 180 L90 200 Z'/><path fill='%2332cd32' d='M150 210 L170 190 L190 210 Z'/></svg>"
+        image: "images/tropical_island_paradise.jpg"
     },
     {
         title: "Mountain Trekking Experience",
@@ -93,7 +93,7 @@ const tours = [
         rating: 8.9,
         days: 7,
         location: "Nepal",
-        image: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 250'><rect fill='%23d3d3d3' width='400' height='250'/><path fill='%23a9a9a9' d='M0 150 L100 100 L200 130 L300 90 L400 120 V250 H0 Z'/><path fill='white' d='M150 70 L170 60 L190 70 L210 55 L230 70'/><circle fill='%23fffacd' cx='350' cy='40' r='25' opacity='0.6'/></svg>"
+        image: "images/mountain_trek_tour.jpg"
     },
     {
         title: "European City Discovery",
@@ -101,7 +101,7 @@ const tours = [
         rating: 9.5,
         days: 10,
         location: "Europe",
-        image: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 250'><rect fill='%23ff7f50' width='400' height='250'/><circle fill='%23ffd700' cx='80' cy='60' r='40'/><rect fill='%234b0082' x='150' y='150' width='60' height='100'/><rect fill='%234b0082' x='250' y='120' width='50' height='130'/><path fill='%23ffa500' d='M0 200 Q200 180 400 200 V250 H0 Z'/></svg>"
+        image: "images/city_explore_tour.jpg"
     },
     {
         title: "African Wildlife Safari",
@@ -109,7 +109,7 @@ const tours = [
         rating: 9.0,
         days: 8,
         location: "Tanzania",
-        image: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 250'><rect fill='%23228b22' width='400' height='250'/><circle fill='%23ff6347' cx='100' cy='80' r='15'/><circle fill='%23ff6347' cx='300' cy='100' r='15'/><ellipse fill='%238b4513' cx='200' cy='180' rx='80' ry='40'/><path fill='%23006400' d='M0 200 Q100 170 200 200 T400 200 V250 H0 Z'/></svg>"
+        image: "images/safari_tour.jpg"
     }
 ];
 
