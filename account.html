@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Account — Wanderlust Adventures</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="destinations.css">
+</head>
+<body>
+  <header>
+    <div class="navbar">
+      <a href="index.html" class="logo">Wander<span>Lust</span></a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="destinations.html">Destinations</a></li>
+        </ul>
+      </nav>
+      <a href="cart.html" class="cart-link" aria-label="View cart">🛒 <span id="nav-cart-count" class="cart-count hidden">0</span></a>
+      <a href="account.html" id="nav-account-link" class="account-link">Sign in</a>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <h1>Account</h1>
+
+      <div id="auth-area">
+        <div id="login-panel">
+          <h2>Sign in</h2>
+          <form id="login-form">
+            <label>Email<input type="email" id="login-email" required></label>
+            <label>Password<input type="password" id="login-password" required></label>
+            <button type="submit" class="btn-primary">Sign in</button>
+          </form>
+          <p>Don't have an account? <a href="#" id="show-register">Create one</a></p>
+        </div>
+
+        <div id="register-panel" class="panel-hidden">
+          <h2>Create account</h2>
+          <form id="register-form">
+            <label>Full name<input type="text" id="reg-name" required></label>
+            <label>Email<input type="email" id="reg-email" required></label>
+            <label>Password<input type="password" id="reg-password" required></label>
+            <label>Address<input type="text" id="reg-address"></label>
+            <button type="submit" class="btn-primary">Create account</button>
+          </form>
+          <p>Already have an account? <a href="#" id="show-login">Sign in</a></p>
+        </div>
+      </div>
+
+      <div id="profile-area" class="panel-hidden">
+        <h2>Your profile</h2>
+        <form id="profile-form">
+          <label>Full name<input type="text" id="profile-name"></label>
+          <label>Email<input type="email" id="profile-email" disabled></label>
+          <label>Address<input type="text" id="profile-address"></label>
+          <div class="profile-actions">
+            <button id="save-profile" type="button" class="btn-primary">Save profile</button>
+            <button id="logout-btn" type="button" class="btn-primary alt">Sign out</button>
+          </div>
+        </form>
+
+        <h3>Your bookings</h3>
+        <div id="booking-history"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-bottom">
+      <p>&copy; 2024 WanderLust Adventures. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Simple client-side account system (localStorage)
+    function getUsers(){ try { return JSON.parse(localStorage.getItem('wl_users')||'{}'); } catch(e){ return {}; } }
+    function saveUsers(u){ localStorage.setItem('wl_users', JSON.stringify(u)); window.dispatchEvent(new Event('auth.updated')); }
+    function getCurrentUserEmail(){ return localStorage.getItem('wl_current_user') || null; }
+    function setCurrentUserEmail(e){ if(e) localStorage.setItem('wl_current_user', e); else localStorage.removeItem('wl_current_user'); window.dispatchEvent(new Event('auth.updated')); }
+
+    document.getElementById('show-register').addEventListener('click', (e)=>{ e.preventDefault(); document.getElementById('login-panel').style.display='none'; document.getElementById('register-panel').style.display='block'; });
+    document.getElementById('show-login').addEventListener('click', (e)=>{ e.preventDefault(); document.getElementById('login-panel').style.display='block'; document.getElementById('register-panel').style.display='none'; });
+
+    document.getElementById('register-form').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value.trim();
+      const email = document.getElementById('reg-email').value.trim().toLowerCase();
+      const pwd = document.getElementById('reg-password').value;
+      const address = document.getElementById('reg-address').value || '';
+      if(!email || !pwd) return alert('Provide email and password.');
+      const users = getUsers();
+      if(users[email]) return alert('Account already exists, please login.');
+      users[email] = { name, email, password: pwd, address, history: [] };
+      saveUsers(users);
+      setCurrentUserEmail(email);
+      showProfile(email);
+      alert('Account created and signed in.');
+    });
+
+    document.getElementById('login-form').addEventListener('submit',(e)=>{
+      e.preventDefault();
+      const email = document.getElementById('login-email').value.trim().toLowerCase();
+      const pwd = document.getElementById('login-password').value;
+      const users = getUsers();
+      if(!users[email] || users[email].password !== pwd) return alert('Invalid credentials');
+      setCurrentUserEmail(email);
+      showProfile(email);
+    });
+
+    function showProfile(email){
+      const users = getUsers();
+      const u = users[email];
+      if(!u) return;
+      document.getElementById('auth-area').style.display = 'none';
+      document.getElementById('profile-area').style.display = 'block';
+      document.getElementById('profile-name').value = u.name || '';
+      document.getElementById('profile-email').value = u.email || '';
+      document.getElementById('profile-address').value = u.address || '';
+      renderHistory(u.history || []);
+      updateNavAccountLink();
+    }
+
+    function renderHistory(hist){
+      const el = document.getElementById('booking-history'); el.innerHTML='';
+      if(!hist || hist.length===0){ el.innerHTML = '<p>No previous bookings.</p>'; return; }
+      hist.slice().reverse().forEach(b => {
+        const div = document.createElement('div'); div.className='cart-panel';
+        div.innerHTML = `<strong>${b.title}</strong><div>${b.destTitle || ''}</div><div>Qty: ${b.qty}</div><div>Price: $${(b.price||0).toFixed(2)}</div>`;
+        el.appendChild(div);
+      });
+    }
+
+    document.getElementById('save-profile').addEventListener('click',(e)=>{ e.preventDefault(); const email = getCurrentUserEmail(); if(!email) return; const users = getUsers(); const u = users[email]; u.name = document.getElementById('profile-name').value.trim(); u.address = document.getElementById('profile-address').value.trim(); users[email] = u; saveUsers(users); alert('Profile saved'); updateNavAccountLink(); });
+
+    document.getElementById('logout-btn').addEventListener('click',(e)=>{ e.preventDefault(); setCurrentUserEmail(null); document.getElementById('profile-area').style.display='none'; document.getElementById('auth-area').style.display='block'; updateNavAccountLink(); });
+
+    function updateNavAccountLink(){ const el = document.getElementById('nav-account-link'); if(!el) return; const email = getCurrentUserEmail(); if(email){ const users = getUsers(); const name = (users[email] && users[email].name) ? users[email].name : email; el.textContent = name; el.href = 'account.html'; } else { el.textContent = 'Sign in'; el.href='account.html'; } }
+
+    // On load, if signed in show profile
+    document.addEventListener('DOMContentLoaded', ()=>{ updateNavAccountLink(); const cur = getCurrentUserEmail(); if(cur){ showProfile(cur); } // update cart count
+      const cart = JSON.parse(localStorage.getItem('wl_cart')||'[]'); window.dispatchEvent(new CustomEvent('cart.updated', { detail:{ count: (cart||[]).reduce((s,i)=>s+(i.qty||0),0) } }));
+    });
+
+    // Expose helper to other pages: record bookings to user's history
+    window.addBookingForCurrentUser = function(booking){ const email = getCurrentUserEmail(); if(!email) return false; const users = getUsers(); const u = users[email]; if(!u) return false; u.history = u.history || []; u.history.push(booking); users[email] = u; saveUsers(users); return true; }
+  </script>
+</body>
+</html>

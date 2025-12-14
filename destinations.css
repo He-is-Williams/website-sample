@@ -609,3 +609,7 @@ main#destinations .destinations-grid {
     grid-auto-rows: 200px;
     justify-items: stretch;
 }
+
+/* Helpers used by account page */
+.panel-hidden { display: none; }
+.profile-actions { margin-top: 12px; display:flex; gap:10px; }

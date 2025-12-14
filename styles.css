@@ -838,7 +838,7 @@ nav .has-dropdown {
     text-decoration: none;
     color: inherit;
     font-weight: 600;
-    margin-left: 12px;
+    margin-right: 6px; /* small gap between cart and account icon */
 }
 .cart-link .cart-icon { font-size: 18px; line-height: 1; }
 .cart-count {
@@ -856,8 +856,21 @@ nav .has-dropdown {
 }
 .cart-count.hidden { display: none; }
 
+/* tighten spacing for account/user icon next to cart */
+.account-link {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 4px; /* small gap from cart */
+    text-decoration: none;
+    color: inherit;
+}
+
+@media (max-width: 700px) {
+    .account-link { margin-left: 2px; }
+}
+
 /* make sure cart link aligns nicely on small screens */
 @media (max-width: 700px) {
     .navbar { gap: 8px; }
-    .cart-link { margin-left: 6px; }
+    .cart-link { margin-left: 4px; margin-right: 4px; }
 }
