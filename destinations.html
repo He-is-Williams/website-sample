@@ -31,47 +31,7 @@
 
     <!-- Page Content -->
     <main class="section" id="destinations">
-        <div class="container destinations-layout">
-            <!-- Sidebar / Filters -->
-            <aside>
-                <div class="panel">
-                    <h3>Filter</h3>
-                    <label for="filter-region">Region</label>
-                    <select id="filter-region">
-                        <option value="all">All Regions</option>
-                        <option value="africa">Africa</option>
-                        <option value="asia">Asia</option>
-                        <option value="europe">Europe</option>
-                        <option value="oceania">Oceania</option>
-                    </select>
-
-                    <div class="spacer"></div>
-                    <label for="filter-type">Type</label>
-                    <select id="filter-type">
-                        <option value="all">All Types</option>
-                        <option>Beach & Island</option>
-                        <option>Mountain Trek</option>
-                        <option>City Discovery</option>
-                        <option>Wildlife Safari</option>
-                    </select>
-
-                    <div class="spacer-lg"></div>
-                    <button id="apply-filters" class="btn-primary btn-full">Apply Filters</button>
-                </div>
-
-                <div class="spacer-lg"></div>
-
-                <div class="panel">
-                    <h4>Popular Regions</h4>
-                    <ul>
-                        <li><a href="#">Kenya</a></li>
-                        <li><a href="#">Tanzania</a></li>
-                        <li><a href="#">Japan</a></li>
-                        <li><a href="#">New Zealand</a></li>
-                    </ul>
-                </div>
-            </aside>
-
+        <div class="container">
             <!-- Destinations grid -->
             <section>
                 <div class="page-header-row">
@@ -91,15 +51,51 @@
         </div>
     </main>
 
-    <footer class="destinations-footer">
-        <div class="container">
-            <div class="footer-row">
-                <div>© 2024 WanderLust Adventures</div>
-                <div>Contact: hello@wanderlust.com</div>
+    <!-- full site footer (unified across pages) -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>WanderLust Adventures</h3>
+                <p>Creating unforgettable travel experiences around the world.</p>
+                <p>📞 +254 700 123 456</p>
+                <p>✉️ hello@wanderlust.com</p>
+                <p>📍 Nairobi, Kenya</p>
             </div>
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Travel Insurance</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to get special offers and travel tips</p>
+                <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                    <input type="email" id="newsletter-email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WanderLust Adventures. All rights reserved.</p>
         </div>
     </footer>
 
+    <!-- include site script -->
     <script src="script.js"></script>
     <script>
         // Sample data for the destinations page (keeps content dynamic and consistent)
@@ -131,17 +127,10 @@
             count.textContent = items.length;
         }
 
+        // render initial list
         renderDestinations(sampleDestinations);
 
-        // Filter behavior (basic)
-        document.getElementById('apply-filters').addEventListener('click', () => {
-            const region = document.getElementById('filter-region').value;
-            const type = document.getElementById('filter-type').value;
-            // this is a demo: just filter by name for the region value
-            let filtered = sampleDestinations.slice();
-            if (region !== 'all') filtered = filtered.filter(d => d.name.toLowerCase().includes(region));
-            renderDestinations(filtered);
-        });
+        // Filter controls were removed from the page; no JS needed here.
     </script>
 </body>
 </html>

@@ -19,6 +19,11 @@
                     <li><a href="destinations.html">Destinations</a></li>
                 </ul>
             </nav>
+            <!-- cart link -->
+            <a href="cart.html" class="cart-link" id="nav-cart-link" aria-label="View cart">
+                <span class="cart-icon">🛒</span>
+                <span id="nav-cart-count" class="cart-count hidden">0</span>
+            </a>
         </div>
     </header>
 
@@ -71,7 +76,45 @@
         </section>
     </main>
 
-    <footer>
+    <!-- full site footer (unified across pages) -->
+    <footer id="contact">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>WanderLust Adventures</h3>
+                <p>Creating unforgettable travel experiences around the world.</p>
+                <p>📞 +254 700 123 456</p>
+                <p>✉️ hello@wanderlust.com</p>
+                <p>📍 Nairobi, Kenya</p>
+            </div>
+            <div class="footer-section">
+                <h3>Company</h3>
+                <ul>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Press</a></li>
+                    <li><a href="#">Partners</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">FAQ</a></li>
+                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Travel Insurance</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Newsletter</h3>
+                <p>Subscribe to get special offers and travel tips</p>
+                <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+                    <input type="email" id="newsletter-email" placeholder="Your email" required>
+                    <button type="submit">Subscribe</button>
+                </form>
+            </div>
+        </div>
         <div class="footer-bottom">
             <p>&copy; 2024 WanderLust Adventures. All rights reserved.</p>
         </div>
@@ -170,5 +213,17 @@
             updateCartCountUI();
         }
     </script>
+
+    <!-- navbar cart badge initializer -->
+    <script>
+        (function(){
+            function getCartLocal(){ try { return JSON.parse(localStorage.getItem('wl_cart')||'[]'); } catch(e) { return []; } }
+            function updateNavCartCount(){ const el = document.getElementById('nav-cart-count'); if(!el) return; const cart = getCartLocal(); const total = (cart||[]).reduce((s,i)=>s+(i.qty||0),0); if(total>0){ el.textContent=total; el.classList.remove('hidden'); } else { el.textContent='0'; el.classList.add('hidden'); } }
+            window.addEventListener('cart.updated', updateNavCartCount);
+            document.addEventListener('DOMContentLoaded', updateNavCartCount);
+        })();
+    </script>
+
+    <script src="script.js"></script>
 </body>
 </html>

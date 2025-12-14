@@ -62,6 +62,12 @@
                 </ul>
             </nav>
             <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+
+            <!-- cart link -->
+            <a href="cart.html" class="cart-link" id="nav-cart-link" aria-label="View cart">
+                <span class="cart-icon">🛒</span>
+                <span id="nav-cart-count" class="cart-count hidden">0</span>
+            </a>
         </div>
     </header>
 
@@ -250,6 +256,18 @@
     </footer>
 
     <script src="script.js"></script>
-</body>
 
+    <!-- navbar cart badge script -->
+    <script>
+        function getCart() { try { return JSON.parse(localStorage.getItem('wl_cart')||'[]'); } catch (e) { return []; } }
+        function updateNavCartCount() {
+            const countEl = document.getElementById('nav-cart-count'); if (!countEl) return;
+            const cart = getCart(); const total = (cart||[]).reduce((s,i)=>s+(i.qty||0),0);
+            if (total>0) { countEl.textContent = total; countEl.classList.remove('hidden'); } else { countEl.textContent='0'; countEl.classList.add('hidden'); }
+        }
+        window.addEventListener('cart.updated', ()=>{ updateNavCartCount(); });
+        document.addEventListener('DOMContentLoaded', ()=>{ updateNavCartCount(); });
+    </script>
+
+</body>
 </html>

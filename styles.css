@@ -829,3 +829,35 @@ nav .has-dropdown {
     .mega-menu-inner { flex-direction: column; gap: 10px; }
     .mega-menu[aria-hidden="false"] { display: block; }
 }
+
+/* Navbar cart link and badge */
+.cart-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: inherit;
+    font-weight: 600;
+    margin-left: 12px;
+}
+.cart-link .cart-icon { font-size: 18px; line-height: 1; }
+.cart-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: #e67e22;
+    color: #fff;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+.cart-count.hidden { display: none; }
+
+/* make sure cart link aligns nicely on small screens */
+@media (max-width: 700px) {
+    .navbar { gap: 8px; }
+    .cart-link { margin-left: 6px; }
+}
