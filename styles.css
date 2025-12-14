@@ -146,15 +146,17 @@ nav a:hover {
 }
 
 .search-box {
-    background: white;
+    background: rgba(255, 255, 255, 0.8); /* make slightly transparent */
     padding: 30px;
     border-radius: 10px;
     display: flex;
     gap: 15px;
     max-width: 900px;
-    margin: 30px auto;
+    margin: 100px auto 10px; /* moved lower within the hero */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     flex-wrap: wrap;
+    -webkit-backdrop-filter: blur(4px); /* Safari support */
+    backdrop-filter: blur(4px); /* subtle blur to improve legibility behind hero image */
 }
 
 .search-box input,
@@ -466,6 +468,7 @@ nav a:hover {
     background: rgba(255, 255, 255, 0.1);
     padding: 30px;
     border-radius: 10px;
+    -webkit-backdrop-filter: blur(10px); /* Safari support */
     backdrop-filter: blur(10px);
 }
 
@@ -672,6 +675,26 @@ footer {
 
     .destination-title {
         font-size: 22px;
+    }
+}
+
+/* Position search box at the bottom of the hero on desktop */
+@media (min-width: 769px) {
+    .hero-content {
+        height: 100%; /* allow inner container to fill the hero */
+    }
+
+    .hero-content > div {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end; /* push content to bottom */
+        align-items: center;
+        height: 100%;
+        padding-bottom: 40px; /* spacing from bottom edge */
+    }
+
+    .search-box {
+        margin: 0 auto 20px; /* ensure search box sits near the bottom */
     }
 }
 

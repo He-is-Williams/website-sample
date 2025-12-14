@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run server (node)",
+			"type": "shell",
+			"command": "node server/server.js",
+			"args": [],
+			"isBackground": true,
+			"problemMatcher": []
+		}
+	]
+}

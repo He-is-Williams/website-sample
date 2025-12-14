@@ -65,6 +65,9 @@
 /* Make primary buttons stretch when needed */
 .btn-full { width: 100%; }
 
+/* helper for panels that need a top margin (used on destination detail sidebar) */
+.related-panel { margin-top: 18px; }
+
 /* Destinations grid adjustments for this page */
 #destinations-list.destinations-grid {
     grid-template-columns: 1fr 1fr; /* two columns of cards */
@@ -152,96 +155,382 @@
     align-items: center;
 }
 
-/* Responsive adjustments */
+/* Destination Detail Page Styles */
+.detail-hero {
+    min-height: 360px;
+    background-size: cover;
+    background-position: center center;
+    color: white;
+    display: flex;
+    align-items: center;
+    padding: 40px 20px;
+}
+.detail-hero .hero-inner { text-align: left; }
+.detail-hero h1 { font-size: 42px; margin: 0 0 6px; }
+.detail-hero .muted { color: rgba(255,255,255,0.9); }
+
+.detail-body { padding: 40px 20px; }
+.detail-content { background: #fff; padding: 26px; border-radius: 10px; box-shadow: 0 8px 30px rgba(0,0,0,0.06); }
+.detail-sidebar { width: 320px; }
+
+.detail-meta { display:flex; gap:12px; align-items:center; margin-bottom:18px; flex-wrap:wrap; }
+.badge { background:#e67e22; color:#fff; padding:6px 10px; border-radius:6px; font-weight:700; }
+.rating { color: #ffb400; font-weight:700; }
+.price { color:#1a5f7a; font-weight:800; }
+
+.gallery { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
+.gallery-img { width: 160px; height: 110px; object-fit:cover; border-radius:6px; box-shadow: 0 6px 18px rgba(0,0,0,0.12); }
+
+.tour-list-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fff;
+    padding: 16px;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+    border: 1px solid #f3f3f3;
+    align-items: flex-start;
+}
+
+.tour-list-item strong {
+    font-size: 16px;
+    color: #1a5f7a;
+}
+
+.tour-list-item .muted {
+    color: #666;
+    margin-top: 4px;
+}
+
+.tour-list-item > div {
+    margin-top: 8px;
+}
+
+.tour-list-item .btn-primary {
+    padding: 8px 14px;
+    font-size: 14px;
+}
+
+/* Product-style tour card (screenshot-inspired) */
+.tour-card-compact {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #eee;
+    height: 100%; /* allow card to stretch to grid cell height */
+}
+.tour-card-compact .thumb {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.sold-badge {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    background: rgba(0,0,0,0.75);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-weight: 700;
+    z-index: 3;
+    font-size: 13px;
+}
+
+.tour-card-compact .card-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1; /* fill remaining vertical space */
+    justify-content: space-between; /* push action button to bottom */
+}
+
+.tour-card-compact .title { font-size: 15px; margin: 0; color: #1a1a1a; }
+.tour-card-compact .excerpt { font-size: 13px; color: #555; margin: 6px 0 0; }
+
+.price-badge { display: inline-block; margin-top: 8px; background: #fff; color:#1a1a1a; font-weight:700; padding:6px 8px; border-radius:4px; border:1px solid #ddd; }
+
+.tour-card-compact .btn-primary { width: 100%; margin-top: 12px; padding: 12px 14px; text-align: center; align-self: stretch; }
+
+.tour-card-compact .btn-primary.alt { background: transparent; color:#1a1a1a; border:1px solid #ddd; }
+.tour-card-compact .btn-primary.disabled { opacity: 0.6; pointer-events: none; }
+
+/* Tours grid: card with thumbnail and content (similar style to reference) */
+#dest-tours {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+    margin-top: 12px;
+    align-items: stretch;
+}
+
+/* On wider screens show two columns of tour cards */
+@media (min-width: 700px) {
+    #dest-tours { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* On very wide screens, three columns */
+@media (min-width: 1200px) {
+    #dest-tours { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* On wider screens arrange title/price left and button to the right */
+@media (min-width: 700px) {
+    .tour-list-item {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .tour-list-item > div { margin-top: 0; }
+}
+
+/* ensure grid items are equal height in multi-column layout */
+@media (min-width: 700px) {
+    #dest-tours { grid-auto-rows: 1fr; }
+}
+
+/* Make sidebar sticky on wide screens */
+@media (min-width: 993px) {
+    .detail-sidebar { position: sticky; top: 120px; align-self: start; }
+}
+
+/* Responsive: stack layout and make hero smaller */
 @media (max-width: 992px) {
     .destinations-layout { grid-template-columns: 1fr; }
-    #destinations-list.destinations-grid { grid-template-columns: 1fr; }
+    .detail-sidebar { width: 100%; }
+    .detail-hero { padding: 28px 16px; min-height: 240px; }
+    .gallery-img { width: 46%; height: 120px; }
 }
 
-@media (max-width: 480px) {
-    .small-hero { padding: 18px 12px; height: auto; min-height: 160px; }
-}
-
-/* Desktop mosaic layout for destinations list (approximates the pasted design) */
+/* Center destination detail content on wide screens */
 @media (min-width: 993px) {
-    #destinations-list.destinations-grid {
-        grid-template-columns: repeat(4, 1fr);
-        grid-auto-rows: 160px; /* increased for better proportions */
+    .destinations-layout {
+        display: grid;
+        grid-template-columns: 1fr minmax(0, 980px) 320px; /* left gutter, centered content, sidebar */
+        gap: 30px;
+        align-items: start;
+    }
+
+    .detail-content {
+        grid-column: 2 / 3; /* place in the center column */
+        margin: 0; /* remove any auto centering to rely on grid */
+        max-width: 100%;
+    }
+
+    .detail-sidebar {
+        grid-column: 3 / 4; /* sidebar on the right */
+    }
+}
+
+/* Grid: make tiles as in screenshot */
+@media (min-width: 700px) {
+    #dest-tours { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+}
+@media (min-width: 1200px) {
+    #dest-tours { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* small screens */
+@media (max-width: 699px) {
+    #dest-tours { grid-template-columns: 1fr; }
+}
+
+/* make buy button outline for alt */
+.tour-card-compact .btn-primary.alt { background: #fff; border: 1px solid #ddd; color:#000; }
+
+/* Tour modal styles */
+.tour-modal {
+    position: fixed;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.6);
+    z-index: 4000;
+}
+.tour-modal.open { display: flex; }
+.tour-modal-panel {
+    background: #fff;
+    width: 92%;
+    max-width: 1100px;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    padding: 18px;
+}
+.modal-close { position: absolute; right: 12px; top: 12px; background: none; border: none; font-size: 18px; cursor: pointer; }
+.tour-modal-grid { display: grid; grid-template-columns: 1fr 420px; gap: 18px; align-items: start; }
+.modal-main { width: 100%; height: 420px; object-fit: cover; border-radius: 6px; }
+.modal-thumbs { display:flex; gap:8px; flex-wrap:wrap; margin-top:8px; }
+.thumb-small { width: 72px; height: 56px; object-fit: cover; border-radius:6px; cursor: pointer; border: 2px solid transparent; }
+.thumb-small:hover { border-color: #e67e22; }
+.modal-details { padding: 6px 0; }
+.modal-price { font-weight:800; color:#1a5f7a; margin-bottom:12px; }
+.qty-control { display:flex; gap:8px; align-items:center; margin-top:8px; }
+.qty-btn { background:#f3f3f3; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
+#modal-qty-input { width:60px; padding:8px; border:1px solid #e6e6e6; border-radius:4px; text-align:center; }
+.modal-info { margin-top:12px; color:#444; }
+
+/* Mobile adjustments */
+@media (max-width: 800px) {
+    .tour-modal-panel { padding: 12px; }
+    .tour-modal-grid { grid-template-columns: 1fr; }
+    .modal-main { height: 320px; }
+}
+
+/* Tour page specific styles (tour.html) */
+.tour-hero { padding: 40px 20px; background: #fff; }
+.tour-hero-grid { display: grid; grid-template-columns: 1fr 420px; gap: 28px; align-items: start; }
+.tour-hero-left { display: flex; flex-direction: column; gap: 12px; }
+.tour-price { font-size: 22px; color: #1a5f7a; font-weight: 800; }
+.tour-short { color: #666; margin: 6px 0 0; }
+
+.tour-main-img { width: 100%; height: 420px; object-fit: cover; border-radius: 8px; display: block; }
+.tour-thumbs { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.tour-thumbs img { width:72px; height:56px; object-fit:cover; border-radius:6px; cursor:pointer; border:2px solid transparent; }
+.tour-thumbs img:hover { border-color:#e67e22; }
+
+.qty-control { display:flex; gap:8px; align-items:center; margin-top:6px; }
+.qty-control label { margin-right:6px; color:#444; }
+.qty-btn { background:#f3f3f3; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
+#qty-input { width:72px; padding:8px; border:1px solid #e6e6e6; border-radius:4px; text-align:center; }
+
+.cta-row { margin-top:12px; }
+
+.tour-info-section { padding: 36px 20px; }
+.tour-info-section h2 { text-align:center; color:#1a5f7a; margin-bottom:18px; font-size:26px; }
+.tour-info { max-width:980px; margin:0 auto; color:#444; line-height:1.7; }
+
+/* Additional Tour page refinements (book panel, meta, toast) */
+.tour-hero-grid { /* ensure the visual-heavy image is left and booking sits on the right */
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 28px;
+    align-items: start;
+}
+
+.tour-hero-left { display:block; }
+.tour-hero-left .tour-main-img { border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+
+.tour-book-panel {
+    background: #fff;
+    padding: 18px;
+    border-radius: 10px;
+    box-shadow: 0 12px 36px rgba(21,50,60,0.06);
+    border: 1px solid #f2f2f2;
+}
+
+.tour-book-panel h1 { font-size: 20px; margin: 0 0 8px; color: #12363f; }
+.tour-book-price { font-size: 22px; color: #1a5f7a; font-weight: 800; margin-bottom: 6px; }
+.tour-short { color: #666; margin-bottom: 12px; }
+
+.meta-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:8px; color:#444; }
+.meta-item { font-size: 14px; color:#444; }
+
+.qty-control { margin-top: 14px; }
+.qty-inner { display:flex; align-items:center; gap:8px; margin-top:6px; }
+.qty-btn { background:#f3f3f3; border:none; padding:8px 10px; border-radius:4px; cursor:pointer; }
+#qty-input { width:72px; padding:8px; border:1px solid #e6e6e6; border-radius:4px; text-align:center; }
+
+.tour-book-panel .cta-row { margin-top: 12px; display:flex; flex-direction:column; }
+.tour-book-panel .btn-primary.alt { margin-top: 8px; }
+.small-note { margin-top: 14px; color:#666; font-size:13px; }
+
+/* Thumbnails (larger, spaced) */
+.tour-thumbs { display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+.thumb-small { width: 72px; height: 56px; object-fit: cover; border-radius:6px; cursor:pointer; border:2px solid transparent; }
+.thumb-small:hover { border-color:#e67e22; }
+
+/* Toast / confirmation */
+#cart-toast.cart-toast {
+    position: fixed;
+    right: 18px;
+    bottom: 18px;
+    z-index: 9999;
+    display: none;
+    background: rgba(26,95,122,0.94);
+    color:#fff;
+    padding: 12px 16px;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+}
+
+/* Cart page styles */
+.cart-container { padding: 40px 20px; }
+.cart-empty { display: none; color: #666; }
+.cart-summary { margin-top: 20px; display: none; }
+.cart-row { display:flex; gap:12px; align-items:center; margin-bottom:12px; }
+.cart-thumb { width:120px; height:80px; object-fit:cover; border-radius:6px; }
+.cart-item-meta { flex:1; }
+.cart-item-meta .meta-line { color:#666; margin-top:6px; }
+.cart-qty { width:48px; text-align:center; }
+.cart-actions { margin-top:8px; }
+
+.cart-panel { padding:14px; border-radius:8px; box-shadow: 0 8px 24px rgba(0,0,0,0.06); background:#fff; border:1px solid #f3f3f3; }
+
+/* Small helpers used by toast already added */
+.cart-toast { position: fixed; right: 18px; bottom: 18px; z-index: 9999; display: none; }
+
+/* ensure responsive spacing for cart page */
+@media (max-width: 700px) {
+    .cart-row { flex-direction: column; align-items: flex-start; }
+    .cart-thumb { width:100%; height:160px; }
+}
+
+/* Mobile refinements for tour detail (improve stacking, spacing and tap targets) */
+@media (max-width: 700px) {
+    .tour-hero {
+        padding: 20px 12px;
+    }
+
+    /* Stack image then booking panel full width */
+    .tour-hero-grid {
+        grid-template-columns: 1fr;
         gap: 18px;
-        grid-auto-flow: row; /* avoid dense reflow that can cause overlap */
     }
 
-    .destination-card { height: 100%; }
-    .destination-card img.destination-img { height: 100%; width: 100%; object-fit: cover; }
+    .tour-hero-left { order: 0; }
+    .tour-book-panel { order: 1; width: 100%; padding: 16px; }
 
-    /* subtle overlay to improve text contrast on images */
-    .destination-card::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(180deg, rgba(0,0,0,0.06) 0%, rgba(0,0,0,0.45) 100%);
-        z-index: 1;
-        pointer-events: none;
-    }
+    /* Make main image responsive and not too tall on phones */
+    .tour-main-img { height: 260px; border-radius: 8px; }
 
-    .destination-info { z-index: 2; left: 20px; bottom: 20px; }
+    /* Thumbnails slightly smaller and touch-friendly */
+    .tour-thumbs, .thumb-small { gap: 8px; }
+    .thumb-small { width: 64px; height: 48px; }
 
-    /* Tile class-based spans to avoid overlap and be deterministic */
-    .destination-card.tile-large { grid-column: span 2; grid-row: span 2; }
-    .destination-card.tile-wide { grid-column: span 2; grid-row: span 1; }
-    .destination-card.tile-tall { grid-column: span 1; grid-row: span 2; }
-    .destination-card.tile-small { grid-column: span 1; grid-row: span 1; }
+    /* Larger readable type for price and title */
+    .tour-book-panel h1 { font-size: 20px; }
+    .tour-book-price { font-size: 20px; }
 
-    /* emphasize titles on larger tiles */
-    .destination-card.tile-large .destination-title,
-    .destination-card.tile-wide .destination-title {
-        font-size: 22px;
-    }
+    /* CTA buttons full width and larger tap area */
+    .tour-book-panel .cta-row { display:flex; flex-direction:column; gap:10px; }
+    .tour-book-panel .cta-row .btn-primary, .tour-book-panel .cta-row .btn-primary.alt { width: 100%; padding: 14px 12px; font-size: 16px; }
 
-    /* Fine-tune to avoid overlapping images and improve visual polish on desktop */
-    /* make sure grid items align to the top edge so tall items don't pull neighbors visually */
-    #destinations-list.destinations-grid { align-items: start; }
+    /* Meta rows stack for narrow screens */
+    .meta-row { flex-direction: column; gap:6px; }
 
-    /* Ensure card stretches to its grid cell and uses border-box sizing */
-    .destination-card {
-        box-sizing: border-box;
-        display: block;
-        position: relative; /* keep overlay & info positioned */
-        min-height: 0;
-        height: 100%;
-        overflow: hidden; /* clip any overflowing images */
-    }
+    /* Quantity controls: larger buttons and spacing */
+    .qty-inner button.qty-btn { padding: 10px 12px; }
+    #qty-input { width:64px; }
 
-    /* Make the image fill the card exactly without affecting layout */
-    .destination-card img.destination-img {
-        position: absolute; /* remove image from document flow so it won't push/overlap neighbors */
-        inset: 0; /* top:0; right:0; bottom:0; left:0 */
-        width: 100%;
-        height: 100%;
-        -o-object-fit: cover;
-        object-fit: cover;
-        display: block;
-        transition: transform 0.45s cubic-bezier(.2,.9,.2,1);
-        z-index: 0;
-        will-change: transform;
-    }
+    /* Info section spacing */
+    .tour-info-section { padding: 20px 12px; }
 
-    /* Keep overlay and info above the image */
-    .destination-card::before { z-index: 1; }
-    .destination-info { z-index: 2; }
+    /* Ensure toast doesn't cover important UI on small screens */
+    #cart-toast.cart-toast { right: 12px; left: 12px; bottom: 12px; width: auto; max-width: calc(100% - 24px); text-align:center; }
+}
 
-    /* Use image scale on hover rather than moving the entire card (avoids layout shifts) */
-    .destination-card:hover img.destination-img { transform: scale(1.04); }
-    /* disable translate on the card itself to prevent pushing/overlap effects */
-    .destination-card:hover { transform: none; box-shadow: 0 18px 48px rgba(0,0,0,0.14); }
-
-    /* Small padding within the info to ensure text isn't flush against rounded corners */
-    .destination-info { left: 18px; bottom: 18px; right: 18px; }
-
-    /* Ensure long titles wrap and don't overflow */
-    .destination-title { white-space: normal; line-height: 1.05; text-shadow: 0 2px 8px rgba(0,0,0,0.6); }
-
-    /* If your list grows, prevent accidental overlap by using explicit tile classes */
-    /* These are conservative heights; adjust grid-auto-rows if you need taller or shorter tiles */
-    #destinations-list.destinations-grid { grid-auto-rows: 160px; }
+@media (max-width: 420px) {
+    .tour-main-img { height: 200px; }
+    .thumb-small { width: 56px; height: 40px; }
+    .tour-book-panel h1 { font-size: 18px; }
+    .tour-book-price { font-size: 18px; }
 }

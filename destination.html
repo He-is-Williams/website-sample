@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destination - Wanderlust Adventures</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="destinations.css">
+    <script src="data/destinations.js"></script>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <a href="index.html" class="logo">Wander<span>Lust</span></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="destinations.html">Destinations</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="destination-detail">
+        <section class="detail-hero" id="detail-hero">
+            <div class="container">
+                <div class="hero-inner">
+                    <h1 id="dest-title">Destination Title</h1>
+                    <p id="dest-location" class="muted">Country / Region</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="detail-body">
+            <div class="container destinations-layout">
+                <article class="detail-content">
+                    <div class="detail-meta">
+                        <span class="badge" id="dest-type">Tour Type</span>
+                        <span class="rating" id="dest-rating">★★★★★</span>
+                        <span class="price" id="dest-price">From $0</span>
+                    </div>
+
+                    <p id="dest-description">Description of the destination goes here.</p>
+
+                    <h3>Highlights</h3>
+                    <ul id="dest-highlights"></ul>
+
+                    <h3>Gallery</h3>
+                    <div class="gallery" id="dest-gallery"></div>
+
+                    <h3>Available Tours</h3>
+                    <div id="dest-tours"></div>
+                </article>
+
+                <aside class="detail-sidebar">
+                    <div class="panel">
+                        <h4>Quick Facts</h4>
+                        <ul class="quick-facts" id="dest-facts"></ul>
+                        <div class="spacer"></div>
+                        <button class="btn-primary btn-full" id="book-btn">Book This Tour</button>
+                    </div>
+
+                    <div class="panel related-panel">
+                        <h4>Related Destinations</h4>
+                        <ul id="related-list"></ul>
+                    </div>
+                </aside>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WanderLust Adventures. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Use shared DESTINATIONS from data/destinations.js (window.DESTINATIONS)
+        // Remove local duplicate dataset and reference shared data instead.
+
+        function qs(key) {
+            const params = new URLSearchParams(location.search);
+            return params.get(key);
+        }
+
+        function renderDestination(id) {
+            const DESTINATIONS = window.DESTINATIONS || {};
+            const dest = DESTINATIONS[id] || Object.values(DESTINATIONS)[0] || {};
+
+            document.title = dest.title + ' | Wanderlust Adventures';
+            document.getElementById('dest-title').textContent = dest.title || '';
+            document.getElementById('dest-location').textContent = dest.location || '';
+            document.getElementById('dest-type').textContent = dest.type || '';
+            document.getElementById('dest-rating').textContent = dest.rating || '';
+            document.getElementById('dest-price').textContent = dest.price || '';
+            document.getElementById('dest-description').textContent = dest.description || '';
+
+            // hero image
+            const hero = document.getElementById('detail-hero');
+            if (dest.image) hero.style.backgroundImage = `linear-gradient(135deg, rgba(26,95,122,0.45), rgba(26,95,122,0.45)), url('${dest.image}')`;
+
+            // highlights
+            const highlights = document.getElementById('dest-highlights');
+            highlights.innerHTML = '';
+            (dest.highlights || []).forEach(h => {
+                const li = document.createElement('li'); li.textContent = h; highlights.appendChild(li);
+            });
+
+            // gallery
+            const gallery = document.getElementById('dest-gallery');
+            gallery.innerHTML = '';
+            (dest.gallery || []).forEach(src => {
+                const img = document.createElement('img');
+                img.src = src; img.alt = dest.title; img.className = 'gallery-img';
+                gallery.appendChild(img);
+            });
+
+            // tours
+            const tours = document.getElementById('dest-tours');
+            tours.innerHTML = (dest.tours || []).map((t, i) => `
+                <div class="tour-card-compact ${t.sold ? 'sold-out' : ''}">
+                    ${t.sold ? '<div class="sold-badge">Fully Booked</div>' : ''}
+                    <img src="${t.image}" alt="${t.title}" class="thumb">
+                    <div class="card-body">
+                        <div>
+                            <h4 class="title">${t.title}</h4>
+                            <p class="excerpt">${t.excerpt || ''}</p>
+                        </div>
+                        <div class="meta">
+                            <div class="price-badge">${t.price}</div>
+                        </div>
+                        <a href="tour.html?dest=${dest.id}&tour=${i}" class="btn-primary ${t.sold ? 'alt disabled' : ''}">${t.sold ? 'Fully Booked' : 'View details'}</a>
+                    </div>
+                </div>
+            `).join('');
+
+            // quick facts
+            const facts = document.getElementById('dest-facts');
+            facts.innerHTML = '';
+            (dest.facts || []).forEach(f => { const li = document.createElement('li'); li.textContent = f; facts.appendChild(li); });
+
+            // related
+            const related = document.getElementById('related-list');
+            related.innerHTML = '';
+            (dest.related || []).forEach(rid => {
+                const rdest = (window.DESTINATIONS || {})[rid];
+                if (rdest) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<a href="destination.html?id=${rdest.id}">${rdest.title}</a>`;
+                    related.appendChild(li);
+                }
+            });
+        }
+
+        // Run on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const id = qs('id') || 'maasai-mara';
+            renderDestination(id);
+        });
+    </script>
+
+</body>
+</html>

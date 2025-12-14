@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tour Details - Wanderlust Adventures</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="destinations.css">
+    <!-- include shared destinations data -->
+    <script src="data/destinations.js"></script>
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <a href="index.html" class="logo">Wander<span>Lust</span></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="destinations.html">Destinations</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="tour-detail-page">
+        <section class="tour-hero">
+            <div class="container">
+                <div class="tour-hero-grid">
+                    <!-- image + thumbs on the left (large visual) -->
+                    <div class="tour-hero-left">
+                        <img id="tour-main-img" src="" alt="" class="tour-main-img" />
+                        <div id="tour-thumbs" class="tour-thumbs" aria-hidden="false"></div>
+                    </div>
+
+                    <!-- booking / details panel on the right -->
+                    <aside class="tour-book-panel tour-hero-right" aria-labelledby="tour-title">
+                        <h1 id="tour-title">Tour Title</h1>
+                        <div id="tour-price" class="tour-price tour-book-price">$0</div>
+                        <p id="tour-short" class="tour-short"></p>
+
+                        <div class="meta-row">
+                            <div class="meta-item"><strong>Duration:</strong> <span id="meta-days">—</span></div>
+                            <div class="meta-item"><strong>Location:</strong> <span id="meta-location">—</span></div>
+                        </div>
+
+                        <div class="qty-control">
+                            <label for="qty-input">Travelers</label>
+                            <div class="qty-inner">
+                                <button class="qty-btn" id="qty-decr">-</button>
+                                <input type="number" id="qty-input" value="1" min="1" aria-label="# Travelers">
+                                <button class="qty-btn" id="qty-incr">+</button>
+                            </div>
+                        </div>
+
+                        <div class="cta-row">
+                            <button id="book-now" class="btn-primary">Add to cart</button>
+                            <button id="buy-now" class="btn-primary alt">Book now</button>
+                        </div>
+
+                        <div class="small-note">Free cancellation up to 24 hours before departure. Price may vary based on season.</div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <section class="section tour-info-section">
+            <div class="container">
+                <h2>Tour Information</h2>
+                <div id="tour-info"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WanderLust Adventures. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Toast for add-to-cart confirmations -->
+    <div id="cart-toast" class="cart-toast" aria-live="polite"></div>
+
+    <script>
+        // Read query params and render tour
+        function qs(key) { const p = new URLSearchParams(location.search); return p.get(key); }
+        const destId = qs('dest');
+        const tourIdx = Number(qs('tour'));
+
+        // Use shared DESTINATIONS from data/destinations.js (window.DESTINATIONS)
+        const dest = window.DESTINATIONS && window.DESTINATIONS[destId];
+        const tour = dest && dest.tours && dest.tours[tourIdx] ? dest.tours[tourIdx] : null;
+
+        function parsePrice(p) {
+            if (!p) return 0;
+            const m = String(p).match(/[\d,]+(?:\.\d+)?/);
+            return m ? Number(m[0].replace(/,/g,'')) : 0;
+        }
+
+        // Cart helpers (localStorage: 'wl_cart')
+        function getCart() { try { return JSON.parse(localStorage.getItem('wl_cart') || '[]'); } catch (e) { return []; } }
+        function saveCart(cart) { localStorage.setItem('wl_cart', JSON.stringify(cart)); }
+        function addToCart(item) {
+            const cart = getCart();
+            const existing = cart.find(i => i.destId === item.destId && i.tourIdx === item.tourIdx);
+            if (existing) { existing.qty = (existing.qty || 0) + item.qty; }
+            else { cart.push(item); }
+            saveCart(cart);
+            showToast(`${item.qty} × ${item.title} added to cart`);
+            updateCartCountUI();
+        }
+
+        function showToast(msg) {
+            const el = document.getElementById('cart-toast');
+            el.textContent = msg;
+            el.classList.add('visible');
+            el.style.display = 'block';
+            setTimeout(() => { el.style.opacity = '1'; }, 10);
+            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => { el.style.display = 'none'; el.classList.remove('visible'); }, 400); }, 2200);
+        }
+
+        function updateCartCountUI() {
+            const cart = getCart();
+            const evt = new CustomEvent('cart.updated', { detail: { count: cart.reduce((s,i)=>s+(i.qty||0),0) } });
+            window.dispatchEvent(evt);
+        }
+
+        if (!dest || !tour) {
+            document.getElementById('tour-title').textContent = 'Tour not found';
+        } else {
+            document.title = tour.title + ' | ' + dest.title;
+            document.getElementById('tour-title').textContent = tour.title;
+            document.getElementById('tour-price').textContent = tour.price;
+            document.getElementById('tour-short').textContent = tour.excerpt || dest.description;
+            document.getElementById('meta-days').textContent = (tour.days ? tour.days + ' day(s)' : 'Varies');
+            document.getElementById('meta-location').textContent = dest.location;
+            document.getElementById('tour-main-img').src = tour.image || dest.image;
+
+            // thumbs
+            const thumbs = document.getElementById('tour-thumbs');
+            (dest.gallery || []).forEach(src => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'thumb-small';
+                img.alt = '';
+                img.addEventListener('click', () => { document.getElementById('tour-main-img').src = src; });
+                thumbs.appendChild(img);
+            });
+
+            // info
+            const info = document.getElementById('tour-info');
+            info.innerHTML = `<p>${tour.excerpt || dest.description}</p><ul><li>Duration: ${tour.days || 'Varies'}</li><li>Location: ${dest.location}</li></ul>`;
+
+            // qty controls
+            document.getElementById('qty-decr').addEventListener('click', () => { const el = document.getElementById('qty-input'); if (Number(el.value) > 1) el.stepDown(); });
+            document.getElementById('qty-incr').addEventListener('click', () => { const el = document.getElementById('qty-input'); el.stepUp(); });
+
+            document.getElementById('book-now').addEventListener('click', () => {
+                const qty = Math.max(1, Number(document.getElementById('qty-input').value || 1));
+                const item = { destId: dest.id, tourIdx: tourIdx, title: tour.title, price: parsePrice(tour.price), qty };
+                addToCart(item);
+            });
+
+            document.getElementById('buy-now').addEventListener('click', () => {
+                const qty = Math.max(1, Number(document.getElementById('qty-input').value || 1));
+                const item = { destId: dest.id, tourIdx: tourIdx, title: tour.title, price: parsePrice(tour.price), qty };
+                addToCart(item);
+                location.href = 'cart.html';
+            });
+
+            updateCartCountUI();
+        }
+    </script>
+</body>
+</html>

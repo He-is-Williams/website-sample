@@ -1,78 +1,88 @@
 // Destinations Data
 const destinations = [
     {
+        id: 'mombasa',
         name: "Mombasa",
-        tours: 12,
+        tours: 4,
         badge: "Beach Paradise",
-        image: "images/destination_mombasa.jpg",
+        image: "images/destination_mombasa.png",
         tile: "tile-tall",
         featured: true
     },
     {
+        id: 'nakuru',
         name: "Nakuru",
         tours: 8,
         badge: "Adventure",
-        image: "images/destination_nakuru.jpg",
+        image: "images/destination_nakuru.png",
         tile: "",
         featured: true
     },
     {
-        name: "Dubai",
+        id: 'amboseli',
+        name: "Amboseli",
         tours: 7,
-        badge: "City Break",
-        image: "images/destination_dubai.jpg",
+        badge: "Wildlife",
+        image: "images/destination_amboseli.png",
         tile: "tile-tall",
         featured: true   
     },
     {
-        name: "Japan",
-        tours: 15,
+        id: 'maasai-mara',
+        name: "Maasai Mara",
+        tours: 5,
         badge: "Heritage",
-        image: "images/destination_japan.jpg",
+        image: "images/destination_maasai_mara.png",
         tile: "tile-small",
         featured: true
     },
     {
-        name: "New Zealand",
+        id: 'diani',
+        name: "Diani",
         tours: 9,
         badge: "Nature",
-        image: "images/destination_newzealand.jpg",
+        image: "images/destinantion_diani.png",
         tile: "",
         featured: true
     },
     {
-        name: "Bali",
+        id: 'samburu',
+        name: "Samburu",
         tours: 11,
-        badge: "Beach Paradise",
-        image: "images/destination_3.png",
+        badge: "Wildlife",
+        image: "images/destination_samburu.png",
         tile: "tile-wide"
     },
     {
+        id: 'naivasha',
         name: "Naivasha",
         tours: 10,
         badge: "Cultural",
-        image: "images/destination_2.jpg",
+        image: "images/destinantion_naivasha.png",
         tile: "tile-small"
     },
     {
-        name: "Switzerland",
+        id: 'masai-mt-kenya',
+        name: "Mount Kenya",
         tours: 13,
         badge: "Adventure",
-        image: "images/destination_3.png",
+        image: "images/destination_mtkenya.png",
         tile: ""
     },
     {
-        name: "China",
+        id: 'malindi',
+        name: "Malindi",
         tours: 9,
         badge: "Cultural",
-        image: "images/destination_2.jpg",
+        image: "images/destinantion_malindi.png",
         tile: ""
     },
     {
-        name: "Germany",
+        id: 'kisumu',
+        name: "Kisumu",
         tours: 6,
         badge: "City Break",
-        image: "images/destination_1.png",
+        image: "images/destination_kisumu.png",
         tile: ""
     }
 ];
@@ -165,12 +175,14 @@ function loadDestinations() {
         const classes = `destination-card ${tileClass}`.trim();
         return `
         <div class="${classes}">
-            <img src="${dest.image}" alt="${dest.name}" class="destination-img">
-            <div class="destination-info">
-                <span class="destination-badge">${dest.badge}</span>
-                <h3 class="destination-title">${dest.name}</h3>
-                <p class="destination-tours">${dest.tours} Amazing Tours</p>
-            </div>
+            <a href="destination.html?id=${dest.id}" class="destination-link">
+                <img src="${dest.image}" alt="${dest.name}" class="destination-img">
+                <div class="destination-info">
+                    <span class="destination-badge">${dest.badge}</span>
+                    <h3 class="destination-title">${dest.name}</h3>
+                    <p class="destination-tours">${dest.tours} Amazing Tours</p>
+                </div>
+            </a>
         </div>
         `;
     }).join('');

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cart - Wanderlust Adventures</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="destinations.css">
+</head>
+<body>
+    <header>
+        <div class="navbar">
+            <a href="index.html" class="logo">Wander<span>Lust</span></a>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="destinations.html">Destinations</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="cart-page">
+        <div class="container cart-container">
+            <h1>Your Cart</h1>
+            <div id="cart-empty" class="cart-empty">Your cart is empty. <a href="index.html">Continue browsing</a></div>
+            <div id="cart-list"></div>
+
+            <div id="cart-summary" class="cart-summary">
+                <h3>Order Summary</h3>
+                <div id="summary-lines"></div>
+                <div class="cart-actions" aria-hidden="false">
+                    <strong>Total: <span id="summary-total">$0</span></strong>
+                </div>
+                <div class="cart-actions">
+                    <button id="checkout-btn" class="btn-primary">Proceed to checkout</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WanderLust Adventures. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="data/destinations.js"></script>
+    <script>
+        function parsePrice(p) { if (!p) return 0; const m = String(p).match(/[\d,]+(?:\.\d+)?/); return m ? Number(m[0].replace(/,/g,'')) : 0; }
+        function getCart() { try { return JSON.parse(localStorage.getItem('wl_cart')||'[]'); } catch(e) { return []; } }
+        function saveCart(c) { localStorage.setItem('wl_cart', JSON.stringify(c)); }
+
+        function renderCart() {
+            const cart = getCart();
+            const list = document.getElementById('cart-list');
+            const empty = document.getElementById('cart-empty');
+            const summary = document.getElementById('cart-summary');
+            const lines = document.getElementById('summary-lines');
+            const totalEl = document.getElementById('summary-total');
+
+            if (!cart || cart.length === 0) {
+                empty.style.display = 'block'; list.innerHTML = ''; summary.style.display = 'none'; return;
+            }
+            empty.style.display = 'none'; summary.style.display = 'block';
+
+            list.innerHTML = '';
+            let total = 0;
+            cart.forEach((item, idx) => {
+                const dest = window.DESTINATIONS && window.DESTINATIONS[item.destId];
+                const tour = dest && dest.tours && dest.tours[item.tourIdx] ? dest.tours[item.tourIdx] : null;
+                const row = document.createElement('div'); row.className = 'cart-row cart-panel';
+                row.innerHTML = `
+                    <img src="${tour ? tour.image : ''}" class="cart-thumb" alt="" />
+                    <div class="cart-item-meta">
+                        <strong>${item.title}</strong>
+                        <div class="meta-line">${dest ? dest.title : ''}</div>
+                        <div class="meta-line">Price: <strong>${tour ? tour.price : '$0'}</strong></div>
+                        <div class="meta-line">Qty: <button class="qty-decr" data-idx="${idx}">-</button> <input class="cart-qty" data-idx="${idx}" value="${item.qty}" /> <button class="qty-incr" data-idx="${idx}">+</button>
+                            <button class="remove-item" data-idx="${idx}">Remove</button>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(row);
+                total += (item.price || 0) * (item.qty || 0);
+            });
+
+            // summary lines
+            lines.innerHTML = '';
+            cart.forEach(item => {
+                const line = document.createElement('div'); line.style.display='flex'; line.style.justifyContent='space-between'; line.style.padding='6px 0';
+                line.innerHTML = `<div>${item.qty} × ${item.title}</div><div>$${((item.price||0)*(item.qty||0)).toFixed(2)}</div>`;
+                lines.appendChild(line);
+            });
+            totalEl.textContent = `$${total.toFixed(2)}`;
+
+            // wire quantity and remove handlers
+            document.querySelectorAll('.qty-decr').forEach(b => b.addEventListener('click', (e)=>{
+                const i = Number(e.currentTarget.dataset.idx); const cart = getCart(); if (cart[i].qty>1) cart[i].qty--; saveCart(cart); renderCart();
+            }));
+            document.querySelectorAll('.qty-incr').forEach(b => b.addEventListener('click', (e)=>{
+                const i = Number(e.currentTarget.dataset.idx); const cart = getCart(); cart[i].qty++; saveCart(cart); renderCart();
+            }));
+            document.querySelectorAll('.remove-item').forEach(b => b.addEventListener('click', (e)=>{
+                const i = Number(e.currentTarget.dataset.idx); const cart = getCart(); cart.splice(i,1); saveCart(cart); renderCart();
+            }));
+            document.querySelectorAll('.cart-qty').forEach(inp => inp.addEventListener('change', (e)=>{
+                const i = Number(e.currentTarget.dataset.idx); const cart = getCart(); const v = Math.max(1, Number(e.currentTarget.value||1)); cart[i].qty = v; saveCart(cart); renderCart();
+            }));
+
+            document.getElementById('checkout-btn').addEventListener('click', ()=>{
+                alert('Proceeding to checkout — replace this with real flow.');
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', renderCart);
+    </script>
+</body>
+</html>
