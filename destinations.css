@@ -556,6 +556,16 @@
 /* Slightly larger spacing for input fields to match airy layout */
 .auth-area .form-row input{ padding:0.9rem 0.85rem; border-radius:6px; }
 
+/* Force consistent input width for auth/register/login fields */
+.auth-area .form-row input[type="email"],
+.auth-area .form-row input[type="password"],
+.auth-area .form-row input[type="text"] {
+  width: 262.844px;
+  max-width: 100%; /* allow scaling on very small screens */
+  display: block;
+  margin: 0 auto; /* center the input inside the constrained form-row */
+}
+
 /* On small screens make sure the centered layout collapses nicely */
 @media (max-width: 880px){
   .auth-column{ width:100%; max-width:100%; }

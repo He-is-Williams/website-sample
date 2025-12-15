@@ -12,18 +12,53 @@
 <body>
     <header>
         <div class="navbar">
-            <a href="#" class="logo"><span>Magical Holiday</span> Destinations Ltd</a>
+            <a href="index.html" class="logo"><span>Magical Holiday</span> Destinations Ltd</a>
             <nav>
                 <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="destinations.html">Destinations</a></li>
+                    <li><a href="#home">Home</a></li>
+                    <li class="has-dropdown">
+                        <a href="destinations.html" class="dropdown-link">Destinations</a>
+                        <button class="dropdown-toggle" aria-expanded="false" aria-controls="destinations-menu" aria-label="Open destinations menu">▾</button>
+                        <div class="mega-menu" id="destinations-menu" role="menu" aria-hidden="true">
+                            <div class="mega-menu-inner">
+                                <div class="mega-column">
+                                    <h4>Africa</h4>
+                                    <ul>
+                                        <li><a href="#kenya">Kenya</a></li>
+                                        <li><a href="#mauritius">Mauritius</a></li>
+                                        <li><a href="#south-africa">South Africa</a></li>
+                                        <li><a href="#tanzania">Tanzania</a></li>
+                                    </ul>
+                                </div>
+                                <div class="mega-column">
+                                    <h4>Middle East</h4>
+                                    <ul>
+                                        <li><a href="#china">China</a></li>
+                                        <li><a href="#pakistan">Pakistan</a></li>
+                                        <li><a href="#singapore">Singapore</a></li>
+                                        <li><a href="#uae">UAE (Dubai)</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li><a href="#tours">Tours</a></li>
+                    <li><a href="#articles">Articles</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
                 </ul>
             </nav>
-            <!-- cart link -->
-            <a href="cart.html" class="cart-link" id="nav-cart-link" aria-label="View cart">
-                <span class="cart-icon">🛒</span>
-                <span id="nav-cart-count" class="cart-count hidden">0</span>
-            </a>
+            <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+            <div>
+                <!-- cart link -->
+                <a href="cart.html" class="cart-link" id="nav-cart-link" aria-label="View cart">
+                    <span class="cart-icon">🛒</span>
+                    <span id="nav-cart-count" class="cart-count hidden">0</span>
+                </a>
+
+                <!-- account link -->
+                <a href="account.html" id="nav-account-link" class="account-link" aria-label="Account"><i class="fa-solid fa-user" aria-hidden="true"></i></a>
+            </div>
         </div>
     </header>
 
@@ -101,7 +136,7 @@
                 <ul>
                     <li><a href="#contact">Contact</a></li>
                     <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Terms &amp; Conditions</a></li>
+                    <li><a href="#">Terms & Conditions</a></li>
                     <li><a href="#">Privacy Policy</a></li>
                     <li><a href="#">Travel Insurance</a></li>
                 </ul>
