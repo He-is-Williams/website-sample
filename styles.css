@@ -57,7 +57,7 @@ header {
 }
 
 .logo {
-    font-size: 28px;
+    font-size: 20px;
     font-weight: bold;
     color: #1a5f7a;
     text-decoration: none;
@@ -873,4 +873,21 @@ nav .has-dropdown {
 @media (max-width: 700px) {
     .navbar { gap: 8px; }
     .cart-link { margin-left: 4px; margin-right: 4px; }
+}
+
+/* Ensure cart and account icons stay horizontal and aligned on small screens */
+.navbar > div:last-child {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+@media (max-width: 700px) {
+    /* keep the action icons in a single row next to the mobile menu */
+    .navbar > div:last-child { flex-direction: row; }
+    .cart-link, .account-link { display: inline-flex; align-items: center; margin-left: 0; }
+    /* small spacing so mobile menu button and icons don't collide */
+    .mobile-menu-btn { margin-right: 6px; }
+    /* prevent wrapping inside navbar */
+    .navbar { flex-wrap: nowrap; }
 }
