@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Articles — Wanderlust Adventures</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="container">
+      <div>
+        <span>📞 +254 700 123 456</span>
+        <span>✉️ hello@wanderlust.com</span>
+      </div>
+      <div>
+        <a href="#">Become a Tour Guide</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="navbar">
+      <a href="index.html" class="logo"><span>Magical Holiday</span> Destinations Ltd</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="destinations.html">Destinations</a></li>
+          <li><a href="#tours">Tours</a></li>
+          <li><a href="articles.html">Articles</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+      <div>
+        <a href="cart.html" class="cart-link" id="nav-cart-link" aria-label="View cart">
+          <span class="cart-icon">🛒</span>
+          <span id="nav-cart-count" class="cart-count hidden">0</span>
+        </a>
+        <a href="account.html" id="nav-account-link" class="account-link" aria-label="Account"><i class="fa-solid fa-user" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">Insights & Stories</p>
+        <h2 class="section-title">Latest Articles</h2>
+      </div>
+
+      <div id="articles-grid" class="articles-grid">
+        <!-- articles rendered here -->
+      </div>
+
+      <div style="text-align:center; margin-top:24px;">
+        <button id="load-more" class="btn-primary">Load more articles</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer id="contact">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>WanderLust Adventures</h3>
+        <p>Creating unforgettable travel experiences around the world.</p>
+        <p>📞 +254 700 123 456</p>
+        <p>✉️ hello@wanderlust.com</p>
+        <p>📍 Nairobi, Kenya</p>
+      </div>
+      <div class="footer-section">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Press</a></li>
+          <li><a href="#">Partners</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Terms & Conditions</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Travel Insurance</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Newsletter</h3>
+        <p>Subscribe to get special offers and travel tips</p>
+        <form class="newsletter-form" onsubmit="subscribeNewsletter(event)">
+          <input type="email" id="newsletter-email" placeholder="Your email" required>
+          <button type="submit">Subscribe</button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2024 WanderLust Adventures. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // sample article dataset (can be replaced with dynamic source)
+    const ALL_ARTICLES = [
+      { id:1, title:"How to Pack Light for Any Trip", excerpt:"Practical tips to travel lighter and smarter — maximize space and minimize stress.", date:"June 8, 2025", image:"images/article_1.jpg" },
+      { id:2, title:"Top 10 Coastal Destinations for 2025", excerpt:"Discover beautiful beaches and coastal towns perfect for your next getaway.", date:"May 20, 2025", image:"images/article_2.jpg" },
+      { id:3, title:"A Local's Guide to Nairobi", excerpt:"Insider tips to explore Nairobi like a local — food, markets, and hidden gems.", date:"April 14, 2025", image:"images/article_3.jpg" },
+      { id:4, title:"Family-Friendly Safari Tips", excerpt:"How to plan an unforgettable safari with children and keep everyone entertained.", date:"April 2, 2025", image:"images/article_1.jpg" },
+      { id:5, title:"Budget Travel — Stretch Your Shilling", excerpt:"Money-saving hacks for travel across East Africa without sacrificing experience.", date:"March 18, 2025", image:"images/article_2.jpg" },
+      { id:6, title:"Hidden Waterfalls of Kenya", excerpt:"A guide to lesser-known natural pools and waterfalls perfect for day trips.", date:"February 28, 2025", image:"images/article_3.jpg" },
+      { id:7, title:"Birdwatching Hotspots", excerpt:"Top reserves and seasons for birdwatchers to plan their next trip.", date:"January 10, 2025", image:"images/article_1.jpg" },
+      { id:8, title:"Culinary Trails — Taste the Region", excerpt:"Food-focused itineraries that take you from street food to fine dining.", date:"December 5, 2024", image:"images/article_2.jpg" },
+      { id:9, title:"Safest Solo Travel Practices", excerpt:"Tips and best practices for solo travelers to stay safe and enjoy the journey.", date:"November 20, 2024", image:"images/article_3.jpg" },
+      { id:10, title:"Eco-Friendly Travel Choices", excerpt:"How to reduce your footprint while supporting local communities.", date:"October 11, 2024", image:"images/article_1.jpg" }
+    ];
+
+    const PAGE_SIZE = 4; // show 4 articles initially, load more in batches
+    let renderedCount = 0;
+
+    function renderNextBatch() {
+      const container = document.getElementById('articles-grid');
+      const nextItems = ALL_ARTICLES.slice(renderedCount, renderedCount + PAGE_SIZE);
+      nextItems.forEach(a => {
+        const html = `
+          <article class="article-card">
+            <img src="${a.image}" alt="${a.title}" class="article-img">
+            <div class="article-body">
+              <h3 class="article-title">${a.title}</h3>
+              <p class="article-excerpt">${a.excerpt}</p>
+              <div class="article-meta">${a.date}</div>
+            </div>
+          </article>
+        `;
+        container.insertAdjacentHTML('beforeend', html);
+      });
+      renderedCount += nextItems.length;
+      // hide button if no more articles
+      if (renderedCount >= ALL_ARTICLES.length) {
+        document.getElementById('load-more').style.display = 'none';
+      }
+    }
+
+    document.getElementById('load-more').addEventListener('click', (e) => {
+      renderNextBatch();
+      // smooth scroll to newly added content
+      const lastAdded = document.querySelectorAll('#articles-grid .article-card');
+      if (lastAdded && lastAdded.length) {
+        lastAdded[lastAdded.length - 1].scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+    });
+
+    // initial render
+    document.addEventListener('DOMContentLoaded', () => {
+      renderNextBatch();
+      // update nav cart via existing script if present
+      if (window.updateNavCartCount) window.updateNavCartCount();
+    });
+
+  </script>
+</body>
+</html>
