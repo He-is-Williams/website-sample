@@ -26,46 +26,56 @@
     <div class="container">
       <h1>Account</h1>
 
-      <div id="auth-area">
-        <div id="login-panel">
-          <h2>Sign in</h2>
-          <form id="login-form">
-            <label>Email<input type="email" id="login-email" required></label>
-            <label>Password<input type="password" id="login-password" required></label>
-            <button type="submit" class="btn-primary">Sign in</button>
-          </form>
-          <p>Don't have an account? <a href="#" id="show-register">Create one</a></p>
-        </div>
+      <div class="account-card">
+        <div class="auth-column">
+          <div id="auth-area" class="auth-area">
+            <section id="login-panel" class="panel">
+              <h2>Sign in</h2>
+              <form id="login-form" class="form-grid">
+                <label class="form-row">Email<input type="email" id="login-email" required></label>
+                <label class="form-row">Password<input type="password" id="login-password" required></label>
+                <div class="form-row actions">
+                  <button type="submit" class="btn-primary">Sign in</button>
+                </div>
+              </form>
+              <p class="muted">Don't have an account? <a href="#" id="show-register">Create one</a></p>
+            </section>
 
-        <div id="register-panel" class="panel-hidden">
-          <h2>Create account</h2>
-          <form id="register-form">
-            <label>Full name<input type="text" id="reg-name" required></label>
-            <label>Email<input type="email" id="reg-email" required></label>
-            <label>Password<input type="password" id="reg-password" required></label>
-            <label>Address<input type="text" id="reg-address"></label>
-            <button type="submit" class="btn-primary">Create account</button>
-          </form>
-          <p>Already have an account? <a href="#" id="show-login">Sign in</a></p>
-        </div>
-      </div>
-
-      <div id="profile-area" class="panel-hidden">
-        <h2>Your profile</h2>
-        <form id="profile-form">
-          <label>Full name<input type="text" id="profile-name"></label>
-          <label>Email<input type="email" id="profile-email" disabled></label>
-          <label>Address<input type="text" id="profile-address"></label>
-          <div class="profile-actions">
-            <button id="save-profile" type="button" class="btn-primary">Save profile</button>
-            <button id="logout-btn" type="button" class="btn-primary alt">Sign out</button>
+            <section id="register-panel" class="panel hidden">
+              <h2>Create account</h2>
+              <form id="register-form" class="form-grid">
+                <label class="form-row">Full name<input type="text" id="reg-name" required></label>
+                <label class="form-row">Email<input type="email" id="reg-email" required></label>
+                <label class="form-row">Password<input type="password" id="reg-password" required></label>
+                <label class="form-row">Address<input type="text" id="reg-address"></label>
+                <div class="form-row actions">
+                  <button type="submit" class="btn-primary">Create account</button>
+                </div>
+              </form>
+              <p class="muted">Already have an account? <a href="#" id="show-login">Sign in</a></p>
+            </section>
           </div>
-        </form>
+        </div>
 
-        <h3>Your bookings</h3>
-        <div id="booking-history"></div>
+        <section id="profile-area" class="profile-column hidden panel">
+          <div class="profile-inner">
+            <h2>Your profile</h2>
+            <form id="profile-form" class="form-grid">
+              <label class="form-row">Full name<input type="text" id="profile-name"></label>
+              <label class="form-row">Email<input type="email" id="profile-email" disabled></label>
+              <label class="form-row">Address<input type="text" id="profile-address"></label>
+              <div class="form-row profile-actions">
+                <button id="save-profile" type="button" class="btn-primary">Save profile</button>
+                <button id="logout-btn" type="button" class="btn-primary alt">Sign out</button>
+              </div>
+            </form>
+
+            <h3>Your bookings</h3>
+            <div id="booking-history" class="booking-history"></div>
+          </div>
+        </section>
+
       </div>
-
     </div>
   </main>
 
@@ -82,8 +92,12 @@
     function getCurrentUserEmail(){ return localStorage.getItem('wl_current_user') || null; }
     function setCurrentUserEmail(e){ if(e) localStorage.setItem('wl_current_user', e); else localStorage.removeItem('wl_current_user'); window.dispatchEvent(new Event('auth.updated')); }
 
-    document.getElementById('show-register').addEventListener('click', (e)=>{ e.preventDefault(); document.getElementById('login-panel').style.display='none'; document.getElementById('register-panel').style.display='block'; });
-    document.getElementById('show-login').addEventListener('click', (e)=>{ e.preventDefault(); document.getElementById('login-panel').style.display='block'; document.getElementById('register-panel').style.display='none'; });
+    // utility to add/remove .hidden class
+    function showElement(el){ el.classList.remove('hidden'); }
+    function hideElement(el){ el.classList.add('hidden'); }
+
+    document.getElementById('show-register').addEventListener('click', (e)=>{ e.preventDefault(); hideElement(document.getElementById('login-panel')); showElement(document.getElementById('register-panel')); });
+    document.getElementById('show-login').addEventListener('click', (e)=>{ e.preventDefault(); showElement(document.getElementById('login-panel')); hideElement(document.getElementById('register-panel')); });
 
     document.getElementById('register-form').addEventListener('submit', (e)=>{
       e.preventDefault();
@@ -115,8 +129,8 @@
       const users = getUsers();
       const u = users[email];
       if(!u) return;
-      document.getElementById('auth-area').style.display = 'none';
-      document.getElementById('profile-area').style.display = 'block';
+      hideElement(document.getElementById('auth-area'));
+      showElement(document.getElementById('profile-area'));
       document.getElementById('profile-name').value = u.name || '';
       document.getElementById('profile-email').value = u.email || '';
       document.getElementById('profile-address').value = u.address || '';
@@ -126,17 +140,17 @@
 
     function renderHistory(hist){
       const el = document.getElementById('booking-history'); el.innerHTML='';
-      if(!hist || hist.length===0){ el.innerHTML = '<p>No previous bookings.</p>'; return; }
+      if(!hist || hist.length===0){ el.innerHTML = '<p class="muted">No previous bookings.</p>'; return; }
       hist.slice().reverse().forEach(b => {
-        const div = document.createElement('div'); div.className='cart-panel';
-        div.innerHTML = `<strong>${b.title}</strong><div>${b.destTitle || ''}</div><div>Qty: ${b.qty}</div><div>Price: $${(b.price||0).toFixed(2)}</div>`;
+        const div = document.createElement('div'); div.className='booking-item';
+        div.innerHTML = `<div class="booking-main"><strong>${b.title}</strong><div class="muted small">${b.destTitle || ''}</div></div><div class="booking-meta"><div>Qty: ${b.qty}</div><div>Price: $${(b.price||0).toFixed(2)}</div></div>`;
         el.appendChild(div);
       });
     }
 
     document.getElementById('save-profile').addEventListener('click',(e)=>{ e.preventDefault(); const email = getCurrentUserEmail(); if(!email) return; const users = getUsers(); const u = users[email]; u.name = document.getElementById('profile-name').value.trim(); u.address = document.getElementById('profile-address').value.trim(); users[email] = u; saveUsers(users); alert('Profile saved'); updateNavAccountLink(); });
 
-    document.getElementById('logout-btn').addEventListener('click',(e)=>{ e.preventDefault(); setCurrentUserEmail(null); document.getElementById('profile-area').style.display='none'; document.getElementById('auth-area').style.display='block'; updateNavAccountLink(); });
+    document.getElementById('logout-btn').addEventListener('click',(e)=>{ e.preventDefault(); setCurrentUserEmail(null); hideElement(document.getElementById('profile-area')); showElement(document.getElementById('auth-area')); updateNavAccountLink(); });
 
     function updateNavAccountLink(){ const el = document.getElementById('nav-account-link'); if(!el) return; const email = getCurrentUserEmail(); if(email){ const users = getUsers(); const name = (users[email] && users[email].name) ? users[email].name : email; el.textContent = name; el.href = 'account.html'; } else { el.textContent = 'Sign in'; el.href='account.html'; } }
 
