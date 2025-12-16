@@ -105,6 +105,62 @@
         </div>
     </section>
 
+    <section class="section search-results-section hidden" id="search-results-section" aria-live="polite">
+        <div class="container">
+            <div class="search-results-header">
+                <p class="section-tag">Live Search</p>
+                <h2 class="section-title">Tours Matching Your Plan</h2>
+                <p id="search-summary" class="muted" aria-live="polite">Start a search to see curated tours.</p>
+            </div>
+            <div class="search-toolbar">
+                <div class="search-filters">
+                    <div class="filter-group">
+                        <label for="filter-price" class="filter-label">Price up to <span id="filter-price-value"></span></label>
+                        <input type="range" id="filter-price" min="100" max="5000" step="50">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-duration" class="filter-label">Duration up to <span id="filter-duration-value"></span></label>
+                        <input type="range" id="filter-duration" min="1" max="14" step="1">
+                    </div>
+                    <div class="filter-group">
+                        <label for="filter-rating" class="filter-label">Minimum rating</label>
+                        <select id="filter-rating">
+                            <option value="0">Any rating</option>
+                            <option value="4">4+ stars</option>
+                            <option value="4.5">4.5+ stars</option>
+                            <option value="5">5 stars</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="search-sorts">
+                    <label for="search-sort" class="filter-label">Sort by</label>
+                    <select id="search-sort">
+                        <option value="recommended">Recommended</option>
+                        <option value="price-asc">Price: Low to High</option>
+                        <option value="price-desc">Price: High to Low</option>
+                        <option value="rating-desc">Rating</option>
+                        <option value="date-desc">Newest</option>
+                        <option value="popularity-desc">Popularity</option>
+                    </select>
+                </div>
+            </div>
+            <div id="search-loading-state" class="search-state search-loading hidden">Loading results...</div>
+            <div id="search-empty-state" class="search-state search-empty hidden">
+                <h3>No tours found yet</h3>
+                <p>Try relaxing your filters or explore another destination.</p>
+                <ul>
+                    <li>Widen the price or duration sliders.</li>
+                    <li>Select "Tour Type" to search everywhere.</li>
+                    <li>Check back soon; fresh tours arrive weekly.</li>
+                </ul>
+            </div>
+            <div id="search-results-grid" class="search-results-grid"></div>
+            <div class="search-toolbar search-pagination">
+                <button type="button" id="search-load-more" class="btn-secondary hidden">Load more tours</button>
+            </div>
+        </div>
+    </section>
+
     <!-- Destinations Section -->
     <section class="section" id="destinations">
         <div class="container">
@@ -265,6 +321,7 @@
         </div>
     </footer>
 
+    <script src="data/destinations.js"></script>
     <script src="script.js"></script>
 
     <!-- navbar cart badge script -->

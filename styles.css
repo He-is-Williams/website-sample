@@ -10,6 +10,15 @@ body {
     line-height: 1.6;
 }
 
+.hidden {
+    display: none !important;
+}
+
+.muted {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
 /* Top Bar */
 .top-bar {
     background: #1a5f7a;
@@ -188,6 +197,23 @@ nav a:hover {
 
 .btn-primary:active {
     transform: translateY(0);
+}
+
+.btn-secondary {
+    background: #0b76ef;
+    color: white;
+    padding: 14px 30px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.btn-secondary:hover {
+    background: #0957c4;
+    transform: translateY(-1px);
 }
 
 /* Section Styles */
@@ -396,6 +422,208 @@ nav a:hover {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
+}
+
+.search-results-section {
+    background: #f7fbff;
+    border-radius: 24px;
+    margin: 40px auto;
+    padding: 40px 0 30px;
+    box-shadow: 0 20px 40px rgba(26, 95, 122, 0.08);
+}
+
+.search-results-header {
+    margin-bottom: 28px;
+}
+
+.search-toolbar {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-filters {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.filter-group {
+    flex: 1;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: #1a5f7a;
+}
+
+.search-filters input,
+.search-filters select,
+.search-sorts select {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #dfe3e8;
+    padding: 10px 12px;
+    font-size: 14px;
+    background: white;
+}
+
+.search-sorts {
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.search-state {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+    margin-bottom: 16px;
+}
+
+.search-loading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    color: #1a5f7a;
+}
+
+.search-loading::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border: 3px solid #dfe3e8;
+    border-top-color: #1a5f7a;
+    border-radius: 50%;
+    animation: search-spin 0.8s linear infinite;
+}
+
+.search-empty ul {
+    margin-top: 10px;
+    padding-left: 18px;
+    color: #4b5563;
+}
+
+.search-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.search-tour-card {
+    background: white;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+}
+
+.search-tour-card-media {
+    position: relative;
+    height: 220px;
+}
+
+.search-tour-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.search-tour-rating {
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    color: #1a5f7a;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+}
+
+.search-tour-body {
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.search-tour-body h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #1a5f7a;
+}
+
+.search-tour-description {
+    color: #4b5563;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+.search-tour-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+    color: #5a5a5a;
+}
+
+.search-tour-price {
+    color: #e67e22;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.search-tour-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: auto;
+}
+
+.search-pagination {
+    margin-top: 30px;
+    justify-content: center;
+    display: flex;
+}
+
+@keyframes search-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .search-toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-filters {
+        flex-direction: column;
+    }
+
+    .search-sorts {
+        width: 100%;
+    }
 }
 
 .tour-card {

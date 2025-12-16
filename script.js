@@ -152,6 +152,99 @@ const testimonials = [
 window.testimonials = testimonials;
 window.destinations = destinations;
 
+function parsePriceValue(value) {
+    if (value === null || value === undefined) return 0;
+    if (typeof value === 'number') return value;
+    const cleaned = String(value).replace(/[^0-9.]+/g, '');
+    const parsed = parseFloat(cleaned);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function parseRatingValue(rating) {
+    if (typeof rating === 'number') return rating;
+    if (!rating) return 4.5;
+    const stars = (rating.match(/★/g) || []).length;
+    if (stars) return stars;
+    const numeric = Number(rating);
+    return Number.isFinite(numeric) ? numeric : 4.5;
+}
+
+function formatCurrency(value) {
+    if (typeof value !== 'number' || Number.isNaN(value)) return 'Contact us';
+    return `$${value.toLocaleString()}`;
+}
+
+function createSearchCatalog() {
+    const shared = window.DESTINATIONS || {};
+    const entries = [];
+
+    Object.values(shared).forEach((dest, destIdx) => {
+        const baseRating = parseRatingValue(dest.rating);
+        const toursList = Array.isArray(dest.tours) ? dest.tours : [];
+        toursList.forEach((tour, tourIdx) => {
+            const priceNumeric = parsePriceValue(tour.price) || parsePriceValue(dest.price);
+            const ratingValue = parseRatingValue(tour.rating) || baseRating;
+            entries.push({
+                title: tour.title || `${dest.title} experience`,
+                description: tour.excerpt || dest.description || 'Curated travel experience.',
+                price: tour.price || dest.price || '',
+                priceLabel: priceNumeric ? formatCurrency(priceNumeric) : (tour.price || dest.price || 'Contact us'),
+                priceValue: priceNumeric || 0,
+                days: tour.days || 0,
+                rating: ratingValue,
+                location: dest.location,
+                destinationTitle: dest.title,
+                type: tour.type || dest.type || 'Adventure',
+                image: tour.image || dest.image || 'images/tropical_island_paradise.jpg',
+                destinationId: dest.id,
+                tourIndex: tourIdx,
+                publishedAt: new Date(2024, (destIdx + tourIdx) % 12, 1 + ((destIdx + tourIdx) % 28)),
+                popularity: Math.round((ratingValue || 4) * 20) + (tourIdx * 5)
+            });
+        });
+    });
+
+    if (entries.length) {
+        return entries;
+    }
+
+    return tours.map((tour, index) => {
+        const priceValue = parsePriceValue(tour.price);
+        const ratingValue = parseRatingValue(tour.rating);
+        return {
+            title: tour.title,
+            description: tour.description || `Experience ${tour.location}`,
+            price: tour.price ? `$${tour.price.toLocaleString()}` : '',
+            priceLabel: tour.price ? `$${tour.price.toLocaleString()}` : 'Contact us',
+            priceValue,
+            days: tour.days || 0,
+            rating: ratingValue,
+            location: tour.location,
+            destinationTitle: tour.location,
+            type: 'Featured',
+            image: tour.image,
+            destinationId: null,
+            tourIndex: index,
+            publishedAt: new Date(2024, index % 12, 1 + (index % 28)),
+            popularity: (ratingValue || 0) * 10
+        };
+    });
+}
+
+const SEARCH_CATALOG = createSearchCatalog();
+window.SEARCH_CATALOG = SEARCH_CATALOG;
+
+const searchState = {
+    catalog: SEARCH_CATALOG,
+    baseResults: [],
+    filteredResults: [],
+    currentPage: 1,
+    pageSize: 6,
+    lastDestination: '',
+    lastTourType: '',
+    lastDate: ''
+};
+
 // Load Destinations
 function loadDestinations() {
     // prefer the new destinations list container if present (destinations.html)
@@ -235,17 +328,251 @@ function loadTestimonials() {
 
 // Search Tours Function
 function searchTours() {
-    const destination = document.getElementById('destination').value;
-    const date = document.getElementById('travel-date').value;
-    const tourType = document.getElementById('tour-type').value;
+    const destinationInput = document.getElementById('destination');
+    const dateInput = document.getElementById('travel-date');
+    const tourTypeInput = document.getElementById('tour-type');
+    const destination = destinationInput ? destinationInput.value.trim() : '';
+    const date = dateInput ? dateInput.value : '';
+    const tourType = tourTypeInput ? tourTypeInput.value : '';
 
     if (!destination && !date && tourType === 'Tour Type') {
         alert('Please fill in at least one search field');
         return;
     }
 
-    console.log('Searching tours:', { destination, date, tourType });
-    alert(`Searching for tours to ${destination || 'any destination'} on ${date || 'flexible dates'} with type: ${tourType}`);
+    searchState.lastDestination = destination;
+    searchState.lastTourType = tourType !== 'Tour Type' ? tourType : '';
+    searchState.lastDate = date;
+
+    const destinationTerm = destination.toLowerCase();
+    const tourTypeTerm = searchState.lastTourType.toLowerCase();
+    const catalog = searchState.catalog || [];
+
+    searchState.baseResults = catalog.filter(tour => {
+        const matchesDestination = !destinationTerm ||
+            (tour.destinationTitle && tour.destinationTitle.toLowerCase().includes(destinationTerm)) ||
+            (tour.location && tour.location.toLowerCase().includes(destinationTerm));
+        const matchesType = !tourTypeTerm ||
+            (tour.type && tour.type.toLowerCase().includes(tourTypeTerm));
+        return matchesDestination && matchesType;
+    });
+
+    showSearchSection(true);
+    toggleEmptyState(false);
+    setLoadingState(true);
+
+    setTimeout(() => {
+        if (!searchState.baseResults.length) {
+            searchState.filteredResults = [];
+            renderSearchResults();
+            setLoadingState(false);
+            return;
+        }
+        applyActiveFilters(true);
+        setLoadingState(false);
+    }, 450);
+}
+
+function initSearchControls() {
+    const priceInput = document.getElementById('filter-price');
+    const durationInput = document.getElementById('filter-duration');
+    const ratingSelect = document.getElementById('filter-rating');
+    const sortSelect = document.getElementById('search-sort');
+    const priceValueLabel = document.getElementById('filter-price-value');
+    const durationValueLabel = document.getElementById('filter-duration-value');
+    const loadMoreButton = document.getElementById('search-load-more');
+
+    if (!priceInput || !durationInput || !ratingSelect || !sortSelect) return;
+
+    const maxPrice = Math.max(...searchState.catalog.map(t => t.priceValue || 0), 500);
+    priceInput.max = Math.max(500, Math.ceil(maxPrice / 50) * 50);
+    priceInput.value = priceInput.max;
+
+    const maxDuration = Math.max(...searchState.catalog.map(t => t.days || 0), 7);
+    durationInput.max = Math.max(7, maxDuration);
+    durationInput.value = durationInput.max;
+
+    updateRangeLabel(priceInput, priceValueLabel, val => formatCurrency(val));
+    updateRangeLabel(durationInput, durationValueLabel, val => `${val} day${val === 1 ? '' : 's'}`);
+
+    priceInput.addEventListener('input', () => {
+        updateRangeLabel(priceInput, priceValueLabel, val => formatCurrency(val));
+        if (searchState.baseResults.length) applyActiveFilters(false);
+    });
+
+    durationInput.addEventListener('input', () => {
+        updateRangeLabel(durationInput, durationValueLabel, val => `${val} day${val === 1 ? '' : 's'}`);
+        if (searchState.baseResults.length) applyActiveFilters(false);
+    });
+
+    ratingSelect.addEventListener('change', () => {
+        if (searchState.baseResults.length) applyActiveFilters(false);
+    });
+
+    sortSelect.addEventListener('change', () => {
+        if (searchState.baseResults.length) applyActiveFilters(false);
+    });
+
+    if (loadMoreButton) {
+        loadMoreButton.addEventListener('click', handleLoadMore);
+    }
+}
+
+function updateRangeLabel(input, label, formatter) {
+    if (!input || !label) return;
+    const value = Number(input.value);
+    label.textContent = formatter ? formatter(value) : String(value);
+}
+
+function applyActiveFilters(resetPage = true) {
+    const priceInput = document.getElementById('filter-price');
+    const durationInput = document.getElementById('filter-duration');
+    const ratingSelect = document.getElementById('filter-rating');
+    const sortSelect = document.getElementById('search-sort');
+
+    if (!priceInput || !durationInput || !ratingSelect || !sortSelect) return;
+
+    const priceMax = Number(priceInput.value);
+    const durationMax = Number(durationInput.value);
+    const ratingMin = parseFloat(ratingSelect.value) || 0;
+    const sortOption = sortSelect.value;
+
+    let list = searchState.baseResults.filter(tour => {
+        return (tour.priceValue || 0) <= priceMax &&
+            (tour.days || 0) <= durationMax &&
+            (tour.rating || 0) >= ratingMin;
+    });
+
+    list = sortSearchCatalog(list, sortOption);
+    searchState.filteredResults = list;
+    if (resetPage) {
+        searchState.currentPage = 1;
+    }
+    renderSearchResults();
+}
+
+function sortSearchCatalog(list, mode) {
+    const sorted = list.slice();
+    switch (mode) {
+        case 'price-asc':
+            sorted.sort((a, b) => (a.priceValue || 0) - (b.priceValue || 0));
+            break;
+        case 'price-desc':
+            sorted.sort((a, b) => (b.priceValue || 0) - (a.priceValue || 0));
+            break;
+        case 'rating-desc':
+            sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            break;
+        case 'date-desc': {
+            sorted.sort((a, b) => {
+                const aTime = a.publishedAt instanceof Date ? a.publishedAt.getTime() : 0;
+                const bTime = b.publishedAt instanceof Date ? b.publishedAt.getTime() : 0;
+                return bTime - aTime;
+            });
+            break;
+        }
+        case 'popularity-desc':
+            sorted.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+            break;
+        default:
+            sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+            break;
+    }
+    return sorted;
+}
+
+function renderSearchResults() {
+    const grid = document.getElementById('search-results-grid');
+    const summary = document.getElementById('search-summary');
+    const emptyState = document.getElementById('search-empty-state');
+    const loadMoreButton = document.getElementById('search-load-more');
+
+    if (!grid || !summary) return;
+
+    const total = searchState.filteredResults.length;
+    const visibleLimit = searchState.currentPage * searchState.pageSize;
+    const visibleItems = searchState.filteredResults.slice(0, visibleLimit);
+
+    if (!total) {
+        grid.innerHTML = '';
+        if (emptyState) emptyState.classList.remove('hidden');
+        if (loadMoreButton) loadMoreButton.classList.add('hidden');
+        summary.textContent = 'No tours match your preferences yet.';
+        return;
+    }
+
+    if (emptyState) emptyState.classList.add('hidden');
+    grid.innerHTML = visibleItems.map(tour => {
+        const rating = typeof tour.rating === 'number' ? tour.rating.toFixed(1) : tour.rating;
+        return `
+            <article class="search-tour-card">
+                <div class="search-tour-card-media">
+                    <img src="${tour.image}" alt="${tour.title}">
+                    ${rating ? `<span class="search-tour-rating">⭐ ${rating}</span>` : ''}
+                </div>
+                <div class="search-tour-body">
+                    <h3>${tour.title}</h3>
+                    <p class="search-tour-description">${tour.description}</p>
+                    <div class="search-tour-meta">
+                        <span>${tour.days || 'Varies'} day${tour.days === 1 ? '' : 's'}</span>
+                        <span>${tour.location || tour.destinationTitle || 'Worldwide'}</span>
+                    </div>
+                    <div class="search-tour-footer">
+                        <span class="search-tour-price">${tour.priceLabel || formatCurrency(tour.priceValue)}</span>
+                        <button type="button" class="btn-primary">View</button>
+                    </div>
+                </div>
+            </article>
+        `;
+    }).join('');
+
+    const summaryLocation = getSummaryLocation();
+    const shownCount = Math.min(visibleItems.length, total);
+    summary.textContent = `Showing ${shownCount} of ${total} tours${summaryLocation}.`;
+
+    if (loadMoreButton) {
+        if (shownCount < total) {
+            loadMoreButton.classList.remove('hidden');
+        } else {
+            loadMoreButton.classList.add('hidden');
+        }
+    }
+}
+
+function handleLoadMore() {
+    const totalPages = Math.ceil(searchState.filteredResults.length / searchState.pageSize);
+    if (searchState.currentPage < totalPages) {
+        searchState.currentPage += 1;
+        renderSearchResults();
+    }
+}
+
+function getSummaryLocation() {
+    if (searchState.lastDestination) {
+        return ` near ${searchState.lastDestination}`;
+    }
+    if (searchState.lastTourType) {
+        return ` for ${searchState.lastTourType}`;
+    }
+    return '';
+}
+
+function showSearchSection(visible) {
+    const section = document.getElementById('search-results-section');
+    if (!section) return;
+    section.classList.toggle('hidden', !visible);
+}
+
+function setLoadingState(isLoading) {
+    const loader = document.getElementById('search-loading-state');
+    if (!loader) return;
+    loader.classList.toggle('hidden', !isLoading);
+}
+
+function toggleEmptyState(visible) {
+    const emptyState = document.getElementById('search-empty-state');
+    if (!emptyState) return;
+    emptyState.classList.toggle('hidden', !visible);
 }
 
 // Newsletter Subscription
@@ -369,6 +696,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // start slideshow
     initHeroSlideshow(4000);
+
+    initSearchControls();
 
     // Destinations mega-menu toggle
     const dropdownToggle = document.querySelector('.dropdown-toggle');
