@@ -205,6 +205,15 @@ nav a:hover {
     margin-bottom: 50px;
 }
 
+/* Small utility for page-level controls (sort, filters, etc.) */
+.controls {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 18px;
+    align-items: center;
+}
+
 .section-tag {
     color: #e67e22;
     font-size: 14px;

@@ -123,6 +123,9 @@ const tours = [
     }
 ];
 
+// expose as globals for pages that reference window.tours
+window.tours = tours;
+
 // Testimonials Data
 const testimonials = [
     {
@@ -144,6 +147,10 @@ const testimonials = [
         text: "Traveling with kids can be challenging, but WanderLust made it effortless. Every detail was planned perfectly, and our children had the time of their lives!"
     }
 ];
+
+// expose testimonials and destinations too (some pages reference window.testimonials / window.destinations)
+window.testimonials = testimonials;
+window.destinations = destinations;
 
 // Load Destinations
 function loadDestinations() {

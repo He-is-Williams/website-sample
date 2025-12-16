@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>All Tours — Wanderlust Adventures</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header (copied from index) -->
+  <header>
+    <div class="navbar">
+      <a href="index.html" class="logo"><span>Magical Holiday</span> Destinations Ltd</a>
+      <nav>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="destinations.html">Destinations</a></li>
+          <li><a href="tours.html">Tours</a></li>
+          <li><a href="articles.html">Articles</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+
+      <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+      <div>
+        <a href="cart.html" class="cart-link" id="nav-cart-link" aria-label="View cart">
+          <span class="cart-icon">🛒</span>
+          <span id="nav-cart-count" class="cart-count hidden">0</span>
+        </a>
+        <a href="account.html" id="nav-account-link" class="account-link" aria-label="Account"><i class="fa-solid fa-user" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container">
+      <div class="section-header">
+        <p class="section-tag">All Tours</p>
+        <h2 class="section-title">Explore Every Tour We Offer</h2>
+      </div>
+
+      <div class="controls">
+        <label class="muted" style="align-self:center;">Sort by:</label>
+        <select id="sort-select" aria-label="Sort tours" >
+          <option value="recommended">Recommended</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="days-asc">Duration: Short to Long</option>
+        </select>
+      </div>
+
+      <div id="all-tours" class="tours-grid">
+        <!-- loaded by script.js -->
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>WanderLust Adventures</h3>
+        <p>Creating unforgettable travel experiences around the world.</p>
+      </div>
+      <div class="footer-section">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="footer-section">
+        <h3>Support</h3>
+        <ul>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>&copy; 2024 WanderLust Adventures</p></div>
+  </footer>
+
+  <script src="data/destinations.js"></script>
+  <script src="script.js"></script>
+  <script>
+    (function(){
+      function parsePrice(value){
+        if(value == null) return 0;
+        if(typeof value === 'number') return value;
+        const cleaned = String(value).replace(/[^0-9.-]+/g, '');
+        const parsed = parseFloat(cleaned);
+        return Number.isFinite(parsed) ? parsed : 0;
+      }
+
+      const sharedDestinations = window.DESTINATIONS || {};
+      const aggregatedTours = Object.values(sharedDestinations).flatMap(dest => {
+        const tours = Array.isArray(dest.tours) ? dest.tours : [];
+        return tours.map((tour, index)=>({
+          ...tour,
+          destinationId: dest.id,
+          destinationTitle: dest.title,
+          destinationLocation: dest.location,
+          destinationPriceLabel: tour.price || dest.price || '',
+          priceValue: parsePrice(tour.price),
+          tourIndex: index
+        }));
+      });
+
+      const fallbackTours = Array.isArray(window.tours) ? window.tours.map((tour, index) => ({
+        ...tour,
+        destinationId: null,
+        destinationTitle: tour.location || 'Global',
+        destinationLocation: tour.location || 'Worldwide',
+        destinationPriceLabel: (typeof tour.price === 'number') ? `$${tour.price.toLocaleString()}` : tour.price,
+        priceValue: (typeof tour.price === 'number') ? tour.price : parsePrice(tour.price),
+        tourIndex: index
+      })) : [];
+
+      const catalog = aggregatedTours.length ? aggregatedTours : fallbackTours;
+
+      function getCart(){
+        try{ return JSON.parse(localStorage.getItem('wl_cart')||'[]'); }
+        catch(e){ return []; }
+      }
+
+      function saveCart(cart){
+        localStorage.setItem('wl_cart', JSON.stringify(cart));
+        const count = (cart||[]).reduce((total, item)=> total + (item.qty||0), 0);
+        window.dispatchEvent(new CustomEvent('cart.updated', { detail: { count } }));
+      }
+
+      function renderTours(list){
+        const container = document.getElementById('all-tours');
+        if(!container) return;
+        if(!list.length){
+          container.innerHTML = '<p class="muted">No tours available right now. Check back later.</p>';
+          return;
+        }
+
+        container.innerHTML = list.map((tour, idx)=>{
+          const priceLabel = tour.destinationPriceLabel ||
+            (typeof tour.price === 'number' ? `$${tour.price.toLocaleString()}` : tour.price || 'Contact us');
+          const destLabel = tour.destinationTitle ? `<a href="destination.html?id=${tour.destinationId}">${tour.destinationTitle}</a>` : 'Worldwide';
+          return `
+            <div class="tour-card">
+              <div class="tour-image">
+                <img src="${tour.image}" alt="${tour.title}">
+                ${tour.rating?`<span class="tour-rating">⭐ ${tour.rating}</span>`:''}
+              </div>
+              <div class="tour-details">
+                <h3 class="tour-title">${tour.title}</h3>
+                <p class="tour-price">${priceLabel} / Person</p>
+                <div class="tour-meta">
+                  <span>${tour.days || 'Varies'} Days</span>
+                  <span>${tour.destinationLocation || tour.location || 'Multiple countries'}</span>
+                </div>
+                <p class="muted" style="font-size: 14px; margin-top: 6px;">Destination: ${destLabel}</p>
+                <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+                  <button class="btn-primary add-cart" data-idx="${idx}">Add to cart</button>
+                  <a class="btn-primary alt" href="tour.html?dest=${tour.destinationId || ''}&tour=${tour.tourIndex || 0}">View details</a>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        container.querySelectorAll('.add-cart').forEach(btn=>{
+          btn.addEventListener('click', ()=>{
+            const idx = Number(btn.getAttribute('data-idx'));
+            const item = list[idx];
+            if(!item) return alert('Item not found');
+            const cart = getCart();
+            const found = cart.find(c => c.title === item.title && c.price === item.price);
+            if(found){ found.qty = (found.qty||1) + 1; }
+            else { cart.push({ title: item.title, price: item.price, qty: 1 }); }
+            saveCart(cart);
+            btn.textContent = 'Added';
+            setTimeout(()=>{ btn.textContent = 'Add to cart'; }, 900);
+          });
+        });
+      }
+
+      function sortAndRender(mode){
+        let list = catalog.slice();
+        switch(mode){
+          case 'price-asc': list.sort((a,b)=>a.priceValue - b.priceValue); break;
+          case 'price-desc': list.sort((a,b)=>b.priceValue - a.priceValue); break;
+          case 'days-asc': list.sort((a,b)=> (a.days||0) - (b.days||0)); break;
+          default: break;
+        }
+        renderTours(list);
+      }
+
+      document.addEventListener('DOMContentLoaded', ()=>{
+        sortAndRender('recommended');
+        const sel = document.getElementById('sort-select');
+        if(sel) sel.addEventListener('change',(e)=> sortAndRender(e.target.value));
+      });
+    })();
+  </script>
+</body>
+</html>
