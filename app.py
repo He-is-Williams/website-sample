@@ -3,12 +3,12 @@ Flask Backend for WanderLust Adventures Website
 This is an optional backend server for handling dynamic content and API requests
 """
 
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)  # Enable CORS for frontend requests
 
 # Sample database (in production, use a real database)
@@ -100,7 +100,7 @@ bookings = []
 @app.route('/')
 def home():
     """Serve the main page"""
-    return render_template('index.html')
+    return app.send_static_file('index.html')
 
 @app.route('/api/destinations', methods=['GET'])
 def get_destinations():

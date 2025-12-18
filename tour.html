@@ -72,17 +72,27 @@
     <main>
         <section class="tour-hero" id="tour-hero">
             <div class="tour-hero-content">
-                <div>
-                    <p class="section-tag light">Tour Details</p>
-                    <h1 id="tour-title">Tour Title</h1>
-                    <p id="tour-location" class="muted">Location</p>
-                    <div class="tour-hero-meta">
-                        <span id="tour-duration">Duration</span>
-                        <span id="tour-rating">Rating</span>
-                        <span id="tour-price-label">Price</span>
+                <div class="tour-hero-copy">
+                    <div>
+                        <p class="section-tag light">Tour Details</p>
+                        <h1 id="tour-title">Tour Title</h1>
+                        <p id="tour-location" class="muted">Location</p>
+                        <div class="tour-hero-meta">
+                            <span id="tour-duration">Duration</span>
+                            <span id="tour-rating">Rating</span>
+                            <span id="tour-price-label">Price</span>
+                        </div>
+                        <div class="tour-hero-badges">
+                            <span id="tour-next-departure">Next departure coming soon</span>
+                            <span class="hero-pill">Small groups</span>
+                            <span class="hero-pill">Curated experiences</span>
+                        </div>
                     </div>
                 </div>
-                <div>
+                <div class="tour-hero-panel">
+                    <p class="tour-hero-panel-label">Secured departure</p>
+                    <p class="tour-hero-panel-price" id="tour-price-card">Price</p>
+                    <p class="tour-hero-panel-note">Space is limited to just 12 travelers for this date.</p>
                     <button class="btn-primary btn-full" id="book-tour">Book this tour</button>
                 </div>
             </div>
@@ -220,6 +230,14 @@
             `).join('');
         };
 
+        const formatDepartureLabel = dateValue => {
+            if (!dateValue) return 'Next departure coming soon';
+            const parsed = new Date(dateValue);
+            if (Number.isNaN(parsed)) return 'Next departure coming soon';
+            const formatted = parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            return `Next departure ${formatted}`;
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const entry = getTourEntry();
             if (!entry) {
@@ -232,8 +250,15 @@
             document.getElementById('tour-location').textContent = entry.location || entry.destinationTitle || 'Worldwide';
             document.getElementById('tour-duration').textContent = `${entry.days || 'Varies'} day tour`;
             document.getElementById('tour-rating').textContent = entry.rating || 'Highly Rated';
-            document.getElementById('tour-price-label').textContent = entry.priceLabel || formatCurrency(entry.priceValue);
+            const priceLabelText = entry.priceLabel || formatCurrency(entry.priceValue);
+            document.getElementById('tour-price-label').textContent = priceLabelText;
+            const heroPriceCard = document.getElementById('tour-price-card');
+            if (heroPriceCard) heroPriceCard.textContent = priceLabelText;
             document.getElementById('tour-description').textContent = entry.description || 'A carefully curated tour that highlights the best of each destination.';
+            const departureEl = document.getElementById('tour-next-departure');
+            if (departureEl) {
+                departureEl.textContent = formatDepartureLabel(entry.publishedAt);
+            }
 
             const hero = document.getElementById('tour-hero');
             if (hero && entry.image) {
