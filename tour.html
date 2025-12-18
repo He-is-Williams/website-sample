@@ -1,21 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tour Details - Wanderlust Adventures</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tour Detail | Wanderlust Adventures</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="destinations.css">
-    <!-- include shared destinations data -->
-    <script src="data/destinations.js"></script>
 </head>
 <body>
+    <div class="top-bar">
+        <div class="container">
+            <div>
+                <span>📞 +254 700 123 456</span>
+                <span>✉️ @MagicalHolidayDestination</span>
+            </div>
+            <div>
+                <a href="#">Become a Tour Guide</a>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="navbar">
             <a href="index.html" class="logo"><span>Magical Holiday</span> Destinations Ltd</a>
             <nav>
                 <ul>
-                    <li><a href="#home">Home</a></li>
+                    <li><a href="index.html#home">Home</a></li>
                     <li class="has-dropdown">
                         <a href="destinations.html" class="dropdown-link">Destinations</a>
                         <button class="dropdown-toggle" aria-expanded="false" aria-controls="destinations-menu" aria-label="Open destinations menu">▾</button>
@@ -24,94 +34,99 @@
                                 <div class="mega-column">
                                     <h4>Africa</h4>
                                     <ul>
-                                        <li><a href="#kenya">Kenya</a></li>
-                                        <li><a href="#mauritius">Mauritius</a></li>
-                                        <li><a href="#south-africa">South Africa</a></li>
-                                        <li><a href="#tanzania">Tanzania</a></li>
+                                        <li><a href="index.html#kenya">Kenya</a></li>
+                                        <li><a href="index.html#mauritius">Mauritius</a></li>
+                                        <li><a href="index.html#south-africa">South Africa</a></li>
+                                        <li><a href="index.html#tanzania">Tanzania</a></li>
                                     </ul>
                                 </div>
                                 <div class="mega-column">
                                     <h4>Middle East</h4>
                                     <ul>
-                                        <li><a href="#china">China</a></li>
-                                        <li><a href="#pakistan">Pakistan</a></li>
-                                        <li><a href="#singapore">Singapore</a></li>
-                                        <li><a href="#uae">UAE (Dubai)</a></li>
+                                        <li><a href="index.html#china">China</a></li>
+                                        <li><a href="index.html#pakistan">Pakistan</a></li>
+                                        <li><a href="index.html#singapore">Singapore</a></li>
+                                        <li><a href="index.html#uae">UAE (Dubai)</a></li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </li>
-                    <li><a href="#tours">Tours</a></li>
-                    <li><a href="#articles">Articles</a></li>
-                    <li><a href="#about">About</a></li>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="index.html#tours">Tours</a></li>
+                    <li><a href="index.html#articles">Articles</a></li>
+                    <li><a href="index.html#about">About</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
                 </ul>
             </nav>
             <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
             <div>
-                <!-- cart link -->
                 <a href="cart.html" class="cart-link" id="nav-cart-link" aria-label="View cart">
                     <span class="cart-icon">🛒</span>
                     <span id="nav-cart-count" class="cart-count hidden">0</span>
                 </a>
-
-                <!-- account link -->
                 <a href="account.html" id="nav-account-link" class="account-link" aria-label="Account"><i class="fa-solid fa-user" aria-hidden="true"></i></a>
             </div>
         </div>
     </header>
 
-    <main class="tour-detail-page">
-        <section class="tour-hero">
-            <div class="container">
-                <div class="tour-hero-grid">
-                    <!-- image + thumbs on the left (large visual) -->
-                    <div class="tour-hero-left">
-                        <img id="tour-main-img" src="" alt="" class="tour-main-img" />
-                        <div id="tour-thumbs" class="tour-thumbs" aria-hidden="false"></div>
+    <main>
+        <section class="tour-hero" id="tour-hero">
+            <div class="tour-hero-content">
+                <div>
+                    <p class="section-tag light">Tour Details</p>
+                    <h1 id="tour-title">Tour Title</h1>
+                    <p id="tour-location" class="muted">Location</p>
+                    <div class="tour-hero-meta">
+                        <span id="tour-duration">Duration</span>
+                        <span id="tour-rating">Rating</span>
+                        <span id="tour-price-label">Price</span>
                     </div>
-
-                    <!-- booking / details panel on the right -->
-                    <aside class="tour-book-panel tour-hero-right" aria-labelledby="tour-title">
-                        <h1 id="tour-title">Tour Title</h1>
-                        <div id="tour-price" class="tour-price tour-book-price">$0</div>
-                        <p id="tour-short" class="tour-short"></p>
-
-                        <div class="meta-row">
-                            <div class="meta-item"><strong>Duration:</strong> <span id="meta-days">—</span></div>
-                            <div class="meta-item"><strong>Location:</strong> <span id="meta-location">—</span></div>
-                        </div>
-
-                        <div class="qty-control">
-                            <label for="qty-input">Travelers</label>
-                            <div class="qty-inner">
-                                <button class="qty-btn" id="qty-decr">-</button>
-                                <input type="number" id="qty-input" value="1" min="1" aria-label="# Travelers">
-                                <button class="qty-btn" id="qty-incr">+</button>
-                            </div>
-                        </div>
-
-                        <div class="cta-row">
-                            <button id="book-now" class="btn-primary">Add to cart</button>
-                            <button id="buy-now" class="btn-primary alt">Book now</button>
-                        </div>
-
-                        <div class="small-note">Free cancellation up to 24 hours before departure. Price may vary based on season.</div>
-                    </aside>
+                </div>
+                <div>
+                    <button class="btn-primary btn-full" id="book-tour">Book this tour</button>
                 </div>
             </div>
         </section>
 
-        <section class="section tour-info-section">
+        <section class="section tour-detail-section">
             <div class="container">
-                <h2>Tour Information</h2>
-                <div id="tour-info"></div>
+                <div class="tour-grid">
+                    <article class="tour-body">
+                        <h3>Overview</h3>
+                        <p id="tour-description">The full tour description goes here.</p>
+
+                        <h3>Why travelers choose this</h3>
+                        <ul id="tour-highlights"></ul>
+
+                        <h3>Sample itinerary</h3>
+                        <div id="tour-itinerary"></div>
+                    </article>
+                    <aside class="tour-sidebar">
+                        <div class="detail-card">
+                            <h4>What's included</h4>
+                            <ul id="tour-includes"></ul>
+                        </div>
+                        <div class="detail-card">
+                            <h4>Need to know</h4>
+                            <ul>
+                                <li>Group size: Up to 12 guests</li>
+                                <li>Meals: Select breakfasts &amp; dinners</li>
+                                <li>Transport: Luxury coach or safari vehicle</li>
+                                <li>Experience level: Moderate</li>
+                            </ul>
+                        </div>
+                        <button class="btn-secondary btn-full" id="download-itinerary">Download itinerary</button>
+                    </aside>
+                </div>
+
+                <div class="tour-similar" id="tour-similar">
+                    <h3>More experiences like this</h3>
+                    <div class="similar-grid" id="similar-grid"></div>
+                </div>
             </div>
         </section>
     </main>
 
-    <!-- full site footer (unified across pages) -->
     <footer id="contact">
         <div class="footer-content">
             <div class="footer-section">
@@ -124,7 +139,7 @@
             <div class="footer-section">
                 <h3>Company</h3>
                 <ul>
-                    <li><a href="#about">About Us</a></li>
+                    <li><a href="index.html#about">About Us</a></li>
                     <li><a href="#">Careers</a></li>
                     <li><a href="#">Blog</a></li>
                     <li><a href="#">Press</a></li>
@@ -134,9 +149,9 @@
             <div class="footer-section">
                 <h3>Support</h3>
                 <ul>
-                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
                     <li><a href="#">FAQ</a></li>
-                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Terms &amp; Conditions</a></li>
                     <li><a href="#">Privacy Policy</a></li>
                     <li><a href="#">Travel Insurance</a></li>
                 </ul>
@@ -155,110 +170,94 @@
         </div>
     </footer>
 
-    <!-- Toast for add-to-cart confirmations -->
-    <div id="cart-toast" class="cart-toast" aria-live="polite"></div>
-
-    <script>
-        // Read query params and render tour
-        function qs(key) { const p = new URLSearchParams(location.search); return p.get(key); }
-        const destId = qs('dest');
-        const tourIdx = Number(qs('tour'));
-
-        // Use shared DESTINATIONS from data/destinations.js (window.DESTINATIONS)
-        const dest = window.DESTINATIONS && window.DESTINATIONS[destId];
-        const tour = dest && dest.tours && dest.tours[tourIdx] ? dest.tours[tourIdx] : null;
-
-        function parsePrice(p) {
-            if (!p) return 0;
-            const m = String(p).match(/[\d,]+(?:\.\d+)?/);
-            return m ? Number(m[0].replace(/,/g,'')) : 0;
-        }
-
-        // Cart helpers (localStorage: 'wl_cart')
-        function getCart() { try { return JSON.parse(localStorage.getItem('wl_cart') || '[]'); } catch (e) { return []; } }
-        function saveCart(cart) { localStorage.setItem('wl_cart', JSON.stringify(cart)); }
-        function addToCart(item) {
-            const cart = getCart();
-            const existing = cart.find(i => i.destId === item.destId && i.tourIdx === item.tourIdx);
-            if (existing) { existing.qty = (existing.qty || 0) + item.qty; }
-            else { cart.push(item); }
-            saveCart(cart);
-            showToast(`${item.qty} × ${item.title} added to cart`);
-            updateCartCountUI();
-        }
-
-        function showToast(msg) {
-            const el = document.getElementById('cart-toast');
-            el.textContent = msg;
-            el.classList.add('visible');
-            el.style.display = 'block';
-            setTimeout(() => { el.style.opacity = '1'; }, 10);
-            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => { el.style.display = 'none'; el.classList.remove('visible'); }, 400); }, 2200);
-        }
-
-        function updateCartCountUI() {
-            const cart = getCart();
-            const evt = new CustomEvent('cart.updated', { detail: { count: cart.reduce((s,i)=>s+(i.qty||0),0) } });
-            window.dispatchEvent(evt);
-        }
-
-        if (!dest || !tour) {
-            document.getElementById('tour-title').textContent = 'Tour not found';
-        } else {
-            document.title = tour.title + ' | ' + dest.title;
-            document.getElementById('tour-title').textContent = tour.title;
-            document.getElementById('tour-price').textContent = tour.price;
-            document.getElementById('tour-short').textContent = tour.excerpt || dest.description;
-            document.getElementById('meta-days').textContent = (tour.days ? tour.days + ' day(s)' : 'Varies');
-            document.getElementById('meta-location').textContent = dest.location;
-            document.getElementById('tour-main-img').src = tour.image || dest.image;
-
-            // thumbs
-            const thumbs = document.getElementById('tour-thumbs');
-            (dest.gallery || []).forEach(src => {
-                const img = document.createElement('img');
-                img.src = src;
-                img.className = 'thumb-small';
-                img.alt = '';
-                img.addEventListener('click', () => { document.getElementById('tour-main-img').src = src; });
-                thumbs.appendChild(img);
-            });
-
-            // info
-            const info = document.getElementById('tour-info');
-            info.innerHTML = `<p>${tour.excerpt || dest.description}</p><ul><li>Duration: ${tour.days || 'Varies'}</li><li>Location: ${dest.location}</li></ul>`;
-
-            // qty controls
-            document.getElementById('qty-decr').addEventListener('click', () => { const el = document.getElementById('qty-input'); if (Number(el.value) > 1) el.stepDown(); });
-            document.getElementById('qty-incr').addEventListener('click', () => { const el = document.getElementById('qty-input'); el.stepUp(); });
-
-            document.getElementById('book-now').addEventListener('click', () => {
-                const qty = Math.max(1, Number(document.getElementById('qty-input').value || 1));
-                const item = { destId: dest.id, tourIdx: tourIdx, title: tour.title, price: parsePrice(tour.price), qty };
-                addToCart(item);
-            });
-
-            document.getElementById('buy-now').addEventListener('click', () => {
-                const qty = Math.max(1, Number(document.getElementById('qty-input').value || 1));
-                const item = { destId: dest.id, tourIdx: tourIdx, title: tour.title, price: parsePrice(tour.price), qty };
-                addToCart(item);
-                location.href = 'cart.html';
-            });
-
-            updateCartCountUI();
-        }
-    </script>
-
-    <!-- navbar cart badge initializer -->
-    <script>
-        (function(){
-            function getCartLocal(){ try { return JSON.parse(localStorage.getItem('wl_cart')||'[]'); } catch(e) { return []; } }
-            function updateNavCartCount(){ const el = document.getElementById('nav-cart-count'); if(!el) return; const cart = getCartLocal(); const total = (cart||[]).reduce((s,i)=>s+(i.qty||0),0); if(total>0){ el.textContent=total; el.classList.remove('hidden'); } else { el.textContent='0'; el.classList.add('hidden'); } }
-            window.addEventListener('cart.updated', updateNavCartCount);
-            document.addEventListener('DOMContentLoaded', updateNavCartCount);
-        })();
-    </script>
-
+    <script src="data/destinations.js"></script>
     <script src="script.js"></script>
+    <script>
+        const getTourEntry = () => {
+            const params = new URLSearchParams(window.location.search);
+            const index = Number(params.get('index'));
+            const catalog = window.SEARCH_CATALOG || [];
+            return catalog.find(item => item.catalogIndex === index) || catalog[0] || null;
+        };
+
+        const buildHighlights = entry => {
+            const items = [];
+            if (entry.destinationTitle) items.push(`Experience the best of ${entry.destinationTitle}`);
+            if (entry.location) items.push(`Explore ${entry.location}`);
+            if (entry.type) items.push(`${entry.type} adventure with curated guides`);
+            if (entry.days) items.push(`${entry.days}-day immersion`);
+            items.push('Personalized guides and curated activities');
+            return items;
+        };
+
+        const buildItinerary = entry => {
+            const rows = [];
+            const days = entry.days || 5;
+            for (let i = 1; i <= Math.min(days, 6); i += 1) {
+                rows.push({
+                    title: `Day ${i}`,
+                    text: `Signature experience ${i} blends cultural immersion, comfortable stays, and relaxed evenings.`
+                });
+            }
+            return rows;
+        };
+
+        const renderSimilar = entry => {
+            const container = document.getElementById('similar-grid');
+            if (!container) return;
+            const catalog = (window.SEARCH_CATALOG || []).filter(item => item.catalogIndex !== entry.catalogIndex && item.destinationId === entry.destinationId);
+            if (!catalog.length) {
+                container.innerHTML = '<p>No similar experiences right now — try expanding your search.</p>';
+                return;
+            }
+            container.innerHTML = catalog.slice(0, 4).map(item => `
+                <div class="similar-card">
+                    <h4>${item.title}</h4>
+                    <p class="muted">${item.type || 'Curated tour'}</p>
+                    <p><strong>${item.priceLabel || formatCurrency(item.priceValue)}</strong></p>
+                    <a href="tour.html?index=${item.catalogIndex}"><i class="fa-solid fa-arrow-right"></i> View tour</a>
+                </div>
+            `).join('');
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const entry = getTourEntry();
+            if (!entry) {
+                document.getElementById('tour-description').textContent = 'Tour not found.';
+                return;
+            }
+
+            document.title = `${entry.title} | Wanderlust Adventures`;
+            document.getElementById('tour-title').textContent = entry.title;
+            document.getElementById('tour-location').textContent = entry.location || entry.destinationTitle || 'Worldwide';
+            document.getElementById('tour-duration').textContent = `${entry.days || 'Varies'} day tour`;
+            document.getElementById('tour-rating').textContent = entry.rating || 'Highly Rated';
+            document.getElementById('tour-price-label').textContent = entry.priceLabel || formatCurrency(entry.priceValue);
+            document.getElementById('tour-description').textContent = entry.description || 'A carefully curated tour that highlights the best of each destination.';
+
+            const hero = document.getElementById('tour-hero');
+            if (hero && entry.image) {
+                hero.style.backgroundImage = `linear-gradient(135deg, rgba(9, 12, 34, 0.8), rgba(4, 7, 26, 0.6)), url('${entry.image}')`;
+            }
+
+            document.getElementById('tour-includes').innerHTML = (entry.includes || ['Accommodation', 'Meals as noted', 'Guided experiences']).map(item => `<li>${item}</li>`).join('');
+            document.getElementById('tour-highlights').innerHTML = buildHighlights(entry).map(item => `<li>${item}</li>`).join('');
+            document.getElementById('tour-itinerary').innerHTML = buildItinerary(entry).map(row => `
+                <div class="tour-itinerary-card">
+                    <strong>${row.title}</strong>
+                    <p>${row.text}</p>
+                </div>
+            `).join('');
+
+            renderSimilar(entry);
+
+            document.getElementById('book-tour').addEventListener('click', () => {
+                alert('Great choice! Reach out via contact@wanderlust.com to confirm your booking.');
+            });
+            document.getElementById('download-itinerary').addEventListener('click', () => {
+                alert('Itinerary preview has been added to your inbox (simulated).');
+            });
+        });
+    </script>
 </body>
 </html>

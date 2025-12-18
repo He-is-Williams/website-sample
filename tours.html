@@ -129,6 +129,13 @@
         window.dispatchEvent(new CustomEvent('cart.updated', { detail: { count } }));
       }
 
+      function summarizeText(value, maxLength = 110) {
+        if (!value) return '';
+        const trimmed = String(value).trim();
+        if (trimmed.length <= maxLength) return trimmed;
+        return `${trimmed.slice(0, maxLength).trim()}…`;
+      }
+
       function renderTours(list){
         const container = document.getElementById('all-tours');
         if(!container) return;
@@ -140,25 +147,21 @@
         container.innerHTML = list.map((tour, idx)=>{
           const priceLabel = tour.destinationPriceLabel ||
             (typeof tour.price === 'number' ? `$${tour.price.toLocaleString()}` : tour.price || 'Contact us');
-          const destLabel = tour.destinationTitle ? `<a href="destination.html?id=${tour.destinationId}">${tour.destinationTitle}</a>` : 'Worldwide';
+          const priceDisplay = priceLabel.includes('/ Person') ? priceLabel : `${priceLabel} / Person`;
+          const excerpt = summarizeText(tour.excerpt || tour.description || '', 110);
           return `
             <div class="tour-card">
-              <div class="tour-image">
-                <img src="${tour.image}" alt="${tour.title}">
-                ${tour.rating?`<span class="tour-rating">⭐ ${tour.rating}</span>`:''}
-              </div>
-              <div class="tour-details">
-                <h3 class="tour-title">${tour.title}</h3>
-                <p class="tour-price">${priceLabel} / Person</p>
-                <div class="tour-meta">
-                  <span>${tour.days || 'Varies'} Days</span>
-                  <span>${tour.destinationLocation || tour.location || 'Multiple countries'}</span>
+              <img class="card-img" src="${tour.image}" alt="${tour.title}">
+              <div class="card-body">
+                <div>
+                  <h3 class="card-title">${tour.title}</h3>
+                  ${excerpt ? `<p class="card-description">${excerpt}</p>` : '<p class="card-description">Discover a curated experience with Wanderlust Adventures.</p>'}
                 </div>
-                <p class="muted" style="font-size: 14px; margin-top: 6px;">Destination: ${destLabel}</p>
-                <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
-                  <button class="btn-primary add-cart" data-idx="${idx}">Add to cart</button>
-                  <a class="btn-primary alt" href="tour.html?dest=${tour.destinationId || ''}&tour=${tour.tourIndex || 0}">View details</a>
+                <div class="card-footer">
+                  <span class="card-price">${priceDisplay}</span>
+                  <a class="btn-primary card-btn" href="tour.html?dest=${tour.destinationId || ''}&tour=${tour.tourIndex || 0}">View details</a>
                 </div>
+                <button class="card-add add-cart" data-idx="${idx}">Add to cart</button>
               </div>
             </div>
           `;

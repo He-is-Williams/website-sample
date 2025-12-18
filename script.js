@@ -174,6 +174,13 @@ function formatCurrency(value) {
     return `$${value.toLocaleString()}`;
 }
 
+function summarizeText(value, maxLength = 120) {
+    if (!value) return '';
+    const trimmed = String(value).trim();
+    if (trimmed.length <= maxLength) return trimmed;
+    return `${trimmed.slice(0, maxLength).trim()}…`;
+}
+
 function createSearchCatalog() {
     const shared = window.DESTINATIONS || {};
     const entries = [];
@@ -182,9 +189,11 @@ function createSearchCatalog() {
         const baseRating = parseRatingValue(dest.rating);
         const toursList = Array.isArray(dest.tours) ? dest.tours : [];
         toursList.forEach((tour, tourIdx) => {
+            const catalogIndex = entries.length;
             const priceNumeric = parsePriceValue(tour.price) || parsePriceValue(dest.price);
             const ratingValue = parseRatingValue(tour.rating) || baseRating;
             entries.push({
+                catalogIndex,
                 title: tour.title || `${dest.title} experience`,
                 description: tour.excerpt || dest.description || 'Curated travel experience.',
                 price: tour.price || dest.price || '',
@@ -212,6 +221,7 @@ function createSearchCatalog() {
         const priceValue = parsePriceValue(tour.price);
         const ratingValue = parseRatingValue(tour.rating);
         return {
+            catalogIndex: index,
             title: tour.title,
             description: tour.description || `Experience ${tour.location}`,
             price: tour.price ? `$${tour.price.toLocaleString()}` : '',
@@ -244,6 +254,88 @@ const searchState = {
     lastTourType: '',
     lastDate: ''
 };
+
+function getHeroSearchInputs() {
+    return {
+        destinationInput: document.getElementById('destination'),
+        dateInput: document.getElementById('travel-date'),
+        tourTypeInput: document.getElementById('tour-type')
+    };
+}
+
+function hasHeroSearchTerms(values = {}) {
+    const destination = (values.destination || '').trim();
+    const date = values.date || '';
+    const tourType = values.tourType || '';
+    return Boolean(destination || date || tourType);
+}
+
+function handleHeroSearch(event, options = {}) {
+    const { preventNavigation = false } = options;
+    const { destinationInput, dateInput, tourTypeInput } = getHeroSearchInputs();
+    const destination = destinationInput ? destinationInput.value.trim() : '';
+    const date = dateInput ? dateInput.value : '';
+    const tourType = tourTypeInput ? tourTypeInput.value : '';
+
+    if (!hasHeroSearchTerms({ destination, date, tourType })) {
+        if (event) event.preventDefault();
+        alert('Please fill in at least one search field');
+        return false;
+    }
+
+    if (preventNavigation && event) {
+        event.preventDefault();
+    }
+
+    return true;
+}
+
+function prefillHeroFormFromParams(params) {
+    if (!params) return false;
+    const { destinationInput, dateInput, tourTypeInput } = getHeroSearchInputs();
+    let filled = false;
+    const destination = params.get('destination');
+    const date = params.get('travel-date');
+    const tourType = params.get('tour-type');
+
+    if (destination && destinationInput) {
+        destinationInput.value = destination;
+        filled = true;
+    }
+    if (date && dateInput) {
+        dateInput.value = date;
+        filled = true;
+    }
+    if (tourType && tourTypeInput) {
+        tourTypeInput.value = tourType;
+        filled = true;
+    }
+
+    return filled;
+}
+
+function isSearchResultsPage() {
+    const fileName = window.location.pathname.split('/').pop().toLowerCase();
+    return fileName === 'search-results.html';
+}
+
+function initSearchPage() {
+    if (!isSearchResultsPage()) return;
+    const heroForm = document.getElementById('hero-search-form');
+    if (heroForm) {
+        heroForm.addEventListener('submit', (event) => {
+            if (handleHeroSearch(event, { preventNavigation: true })) {
+                searchTours();
+            }
+        });
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const hasParams = prefillHeroFormFromParams(params);
+    if (hasParams) {
+        searchTours({ skipValidation: true });
+    }
+}
 
 // Load Destinations
 function loadDestinations() {
@@ -291,27 +383,37 @@ function loadDestinations() {
 // Load Tours
 function loadTours() {
     const container = document.getElementById('tours-container');
-    container.innerHTML = tours.map(tour => `
-        <div class="tour-card">
-            <div class="tour-image">
-                <img src="${tour.image}" alt="${tour.title}">
-                <span class="tour-rating">⭐ ${tour.rating}</span>
-            </div>
-            <div class="tour-details">
-                <h3 class="tour-title">${tour.title}</h3>
-                <p class="tour-price">$${tour.price.toLocaleString()} / Person</p>
-                <div class="tour-meta">
-                    <span>${tour.days} Days</span>
-                    <span>${tour.location}</span>
+    if (!container) return;
+        container.innerHTML = tours.map((tour, idx) => {
+            const priceLabel = tour.destinationPriceLabel ||
+                (typeof tour.price === 'number' ? `$${tour.price.toLocaleString()}` : tour.price || 'Contact us');
+            const priceDisplay = priceLabel.includes('/ Person') ? priceLabel : `${priceLabel} / Person`;
+            const rating = typeof tour.rating === 'number' ? tour.rating.toFixed(1) : tour.rating;
+            const excerpt = summarizeText(tour.excerpt || tour.description || '', 110);
+
+            return `
+                <div class="tour-card">
+                    <img class="card-img" src="${tour.image}" alt="${tour.title}">
+                    <div class="card-body">
+                        <div>
+                            <h3 class="card-title">${tour.title}</h3>
+                            ${excerpt ? `<p class="card-description">${excerpt}</p>` : '<p class="card-description">Discover a curated experience with Wanderlust Adventures.</p>'}
+                        </div>
+                        <div class="card-footer">
+                            <span class="card-price">${priceDisplay}</span>
+                            <a class="btn-primary card-btn" href="tour.html?dest=${tour.destinationId || ''}&tour=${tour.tourIndex || 0}">View details</a>
+                        </div>
+                        <button class="card-add add-cart" data-idx="${idx}">Add to cart</button>
+                    </div>
                 </div>
-            </div>
-        </div>
-    `).join('');
+            `;
+        }).join('');
 }
 
 // Load Testimonials
 function loadTestimonials() {
     const container = document.getElementById('testimonials-container');
+    if (!container) return;
     container.innerHTML = testimonials.map(testimonial => `
         <div class="testimonial-card">
             <p class="testimonial-text">"${testimonial.text}"</p>
@@ -327,7 +429,8 @@ function loadTestimonials() {
 }
 
 // Search Tours Function
-function searchTours() {
+function searchTours(options = {}) {
+    const { skipValidation = false } = options;
     const destinationInput = document.getElementById('destination');
     const dateInput = document.getElementById('travel-date');
     const tourTypeInput = document.getElementById('tour-type');
@@ -335,17 +438,17 @@ function searchTours() {
     const date = dateInput ? dateInput.value : '';
     const tourType = tourTypeInput ? tourTypeInput.value : '';
 
-    if (!destination && !date && tourType === 'Tour Type') {
+    if (!skipValidation && !hasHeroSearchTerms({ destination, date, tourType })) {
         alert('Please fill in at least one search field');
         return;
     }
 
     searchState.lastDestination = destination;
-    searchState.lastTourType = tourType !== 'Tour Type' ? tourType : '';
+    searchState.lastTourType = tourType || '';
     searchState.lastDate = date;
 
     const destinationTerm = destination.toLowerCase();
-    const tourTypeTerm = searchState.lastTourType.toLowerCase();
+    const tourTypeTerm = searchState.lastTourType ? searchState.lastTourType.toLowerCase() : '';
     const catalog = searchState.catalog || [];
 
     searchState.baseResults = catalog.filter(tour => {
@@ -503,23 +606,18 @@ function renderSearchResults() {
 
     if (emptyState) emptyState.classList.add('hidden');
     grid.innerHTML = visibleItems.map(tour => {
-        const rating = typeof tour.rating === 'number' ? tour.rating.toFixed(1) : tour.rating;
+        const detailLink = `tour.html?index=${tour.catalogIndex}`;
+        const excerpt = summarizeText(tour.description || tour.excerpt || '', 100);
+        const priceDisplay = tour.priceLabel || formatCurrency(tour.priceValue);
         return `
             <article class="search-tour-card">
-                <div class="search-tour-card-media">
-                    <img src="${tour.image}" alt="${tour.title}">
-                    ${rating ? `<span class="search-tour-rating">⭐ ${rating}</span>` : ''}
-                </div>
-                <div class="search-tour-body">
-                    <h3>${tour.title}</h3>
-                    <p class="search-tour-description">${tour.description}</p>
-                    <div class="search-tour-meta">
-                        <span>${tour.days || 'Varies'} day${tour.days === 1 ? '' : 's'}</span>
-                        <span>${tour.location || tour.destinationTitle || 'Worldwide'}</span>
-                    </div>
-                    <div class="search-tour-footer">
-                        <span class="search-tour-price">${tour.priceLabel || formatCurrency(tour.priceValue)}</span>
-                        <button type="button" class="btn-primary">View</button>
+                <img class="card-img" src="${tour.image}" alt="${tour.title}">
+                <div class="card-body">
+                    <h3 class="card-title">${tour.title}</h3>
+                    ${excerpt ? `<p class="card-description">${excerpt}</p>` : ''}
+                    <div class="card-footer">
+                        <span class="card-price">${priceDisplay}</span>
+                        <a class="btn-primary card-btn" href="${detailLink}" aria-label="View details for ${tour.title}">View details</a>
                     </div>
                 </div>
             </article>
@@ -698,6 +796,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initHeroSlideshow(4000);
 
     initSearchControls();
+    initSearchPage();
 
     // Destinations mega-menu toggle
     const dropdownToggle = document.querySelector('.dropdown-toggle');
