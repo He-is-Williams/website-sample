@@ -152,6 +152,108 @@ const testimonials = [
 window.testimonials = testimonials;
 window.destinations = destinations;
 
+const REGION_CURRENCY_MAP = {
+    US: 'USD',
+    CA: 'CAD',
+    MX: 'MXN',
+    GB: 'GBP',
+    IE: 'EUR',
+    FR: 'EUR',
+    DE: 'EUR',
+    ES: 'EUR',
+    IT: 'EUR',
+    NL: 'EUR',
+    SE: 'SEK',
+    DK: 'DKK',
+    NO: 'NOK',
+    AU: 'AUD',
+    NZ: 'NZD',
+    JP: 'JPY',
+    CN: 'CNY',
+    IN: 'INR',
+    SG: 'SGD',
+    HK: 'HKD',
+    AE: 'AED',
+    SA: 'SAR',
+    KR: 'KRW',
+    BR: 'BRL',
+    AR: 'ARS',
+    CL: 'CLP',
+    CO: 'COP',
+    ZA: 'ZAR',
+    EG: 'EGP',
+    KE: 'KES',
+    TZ: 'TZS',
+    UG: 'UGX',
+    NG: 'NGN'
+};
+
+const DEFAULT_LOCALE = 'en-US';
+const FALLBACK_CURRENCY = 'USD';
+const BASE_CURRENCY = 'USD';
+const USD_EXCHANGE_RATES = {
+    USD: 1,
+    CAD: 1.36,
+    MXN: 16.25,
+    GBP: 0.78,
+    EUR: 0.93,
+    SEK: 10.65,
+    DKK: 6.82,
+    NOK: 10.80,
+    AUD: 1.67,
+    NZD: 1.78,
+    JPY: 153.4,
+    CNY: 7.24,
+    INR: 83.7,
+    SGD: 1.36,
+    HKD: 7.80,
+    AED: 3.67,
+    SAR: 3.76,
+    KRW: 1420,
+    BRL: 5.13,
+    ARS: 405,
+    CLP: 1010,
+    COP: 4820,
+    ZAR: 18.3,
+    EGP: 30.5,
+    KES: 152.4,
+    TZS: 2910,
+    UGX: 3810,
+    NGN: 1480
+};
+
+function convertFromBaseCurrency(value, targetCurrency = USER_CURRENCY) {
+    if (!Number.isFinite(value)) return 0;
+    const rate = USD_EXCHANGE_RATES[targetCurrency] ?? USD_EXCHANGE_RATES[FALLBACK_CURRENCY] ?? 1;
+    return value * rate;
+}
+
+function detectUserLocale() {
+    if (typeof navigator === 'undefined') return DEFAULT_LOCALE;
+    const locale = (navigator.languages && navigator.languages[0]) || navigator.language || DEFAULT_LOCALE;
+    return String(locale).replace('_', '-');
+}
+
+function detectCurrencyForLocale(locale) {
+    if (!locale) return FALLBACK_CURRENCY;
+    const normalized = locale.toUpperCase().replace('_', '-');
+    const parts = normalized.split('-');
+    const region = parts[1] || parts[0];
+    if (region && REGION_CURRENCY_MAP[region]) {
+        return REGION_CURRENCY_MAP[region];
+    }
+    const language = parts[0];
+    if (language && REGION_CURRENCY_MAP[language]) {
+        return REGION_CURRENCY_MAP[language];
+    }
+    return FALLBACK_CURRENCY;
+}
+
+const USER_LOCALE = detectUserLocale();
+const USER_CURRENCY = detectCurrencyForLocale(USER_LOCALE);
+window.USER_LOCALE = USER_LOCALE;
+window.USER_CURRENCY = USER_CURRENCY;
+
 function parsePriceValue(value) {
     if (value === null || value === undefined) return 0;
     if (typeof value === 'number') return value;
@@ -169,9 +271,24 @@ function parseRatingValue(rating) {
     return Number.isFinite(numeric) ? numeric : 4.5;
 }
 
-function formatCurrency(value) {
-    if (typeof value !== 'number' || Number.isNaN(value)) return 'Contact us';
-    return `$${value.toLocaleString()}`;
+function formatCurrency(value, options = {}) {
+    const numeric = parsePriceValue(value);
+    if (!Number.isFinite(numeric)) return 'Contact us';
+    const locale = options.locale || USER_LOCALE;
+    const currency = options.currency || USER_CURRENCY;
+    const shouldConvert = options.convert !== false;
+    const amount = shouldConvert ? convertFromBaseCurrency(numeric, currency) : numeric;
+    try {
+        const formatter = new Intl.NumberFormat(locale, {
+            style: 'currency',
+            currency,
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 0
+        });
+        return formatter.format(amount);
+    } catch (error) {
+        return `${currency} ${amount.toLocaleString()}`;
+    }
 }
 
 function summarizeText(value, maxLength = 120) {
@@ -179,6 +296,14 @@ function summarizeText(value, maxLength = 120) {
     const trimmed = String(value).trim();
     if (trimmed.length <= maxLength) return trimmed;
     return `${trimmed.slice(0, maxLength).trim()}…`;
+}
+
+function resolveTourPriceLabel(tour) {
+    if (!tour) return 'Contact us';
+    if (tour.destinationPriceLabel) return tour.destinationPriceLabel;
+    if (typeof tour.price === 'number') return formatCurrency(tour.price);
+    if (typeof tour.price === 'string' && tour.price.trim()) return tour.price;
+    return 'Contact us';
 }
 
 function createSearchCatalog() {
@@ -220,12 +345,13 @@ function createSearchCatalog() {
     return tours.map((tour, index) => {
         const priceValue = parsePriceValue(tour.price);
         const ratingValue = parseRatingValue(tour.rating);
+        const fallbackPriceLabel = typeof tour.price === 'number' ? formatCurrency(tour.price) : (tour.price || 'Contact us');
         return {
             catalogIndex: index,
             title: tour.title,
             description: tour.description || `Experience ${tour.location}`,
-            price: tour.price ? `$${tour.price.toLocaleString()}` : '',
-            priceLabel: tour.price ? `$${tour.price.toLocaleString()}` : 'Contact us',
+            price: tour.price || '',
+            priceLabel: fallbackPriceLabel,
             priceValue,
             days: tour.days || 0,
             rating: ratingValue,
@@ -385,8 +511,7 @@ function loadTours() {
     const container = document.getElementById('tours-container');
     if (!container) return;
         container.innerHTML = tours.map((tour, idx) => {
-            const priceLabel = tour.destinationPriceLabel ||
-                (typeof tour.price === 'number' ? `$${tour.price.toLocaleString()}` : tour.price || 'Contact us');
+            const priceLabel = resolveTourPriceLabel(tour);
             const priceDisplay = priceLabel.includes('/ Person') ? priceLabel : `${priceLabel} / Person`;
             const rating = typeof tour.rating === 'number' ? tour.rating.toFixed(1) : tour.rating;
             const excerpt = summarizeText(tour.excerpt || tour.description || '', 110);
